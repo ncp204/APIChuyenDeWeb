@@ -3,12 +3,7 @@ package vn.edu.hcmuaf.st.chuyendeweb.entity;
 
 import vn.edu.hcmuaf.st.chuyendeweb.base.BaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +29,8 @@ public class Account extends BaseEntity {
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
+    @OneToOne(mappedBy = "account")
+    private Cart cart;
 
     public String getUserName() {
         return userName;
@@ -97,5 +94,13 @@ public class Account extends BaseEntity {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

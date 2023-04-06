@@ -32,6 +32,10 @@ public class Laptop extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "manufacture_id")
     private Manufacturer manufacturer;
+    @ManyToOne
+    @JoinColumn(name = "faility_id")
+    private Facility facility;
+
 
     public String getProductName() {
         return productName;
@@ -127,5 +131,13 @@ public class Laptop extends BaseEntity {
 
     public void setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
+    }
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
     }
 }
