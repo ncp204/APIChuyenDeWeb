@@ -1,15 +1,22 @@
 package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.st.chuyendeweb.converter.AccountConverter;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.AccountDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ResponMessenger;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.AccountException;
-import vn.edu.hcmuaf.st.chuyendeweb.hash.Hashing;
+import vn.edu.hcmuaf.st.chuyendeweb.model.RoleType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
+import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Role;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.AccountRepository;
+import vn.edu.hcmuaf.st.chuyendeweb.repository.RoleRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.service.IAccountService;
 
 import java.util.ArrayList;
@@ -17,30 +24,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountService implements IAccountService {
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private AccountConverter accountConverter;
-    private Hashing hashing;
+    private final AccountRepository accountRepository;
+    private final AccountConverter accountConverter;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Override
-    public Account login(String username, String password) {
-        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
-        if (!optionalAccount.isPresent()) {
-            throw new AccountException("Account is not found");
-        }
-        Account account = optionalAccount.get();
-//      Kiểm tra tài khoản đã được kich hoạt hay chưa
-        if (account.getState() != State.ACTIVE) {
-            throw new AccountException("Account is not activated");
-        }
-        if (password.equalsIgnoreCase(account.getPassword())) {
-            return account;
-        } else {
-            throw new AccountException("Password is incorrect");
-        }
+    public String login(String username, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        return "dang nhap thanh cong";
     }
 
     @Override
@@ -50,17 +45,56 @@ public class AccountService implements IAccountService {
 
     //   Thêm mới hoặc cập nhật tài khoản
     @Override
-    public AccountDTO save(AccountDTO dto) {
+    public AccountDTO addAccount(AccountDTO dto) {
         Account account;
-        if (dto.getId() != null) {
-            Optional<Account> optionalAccount = accountRepository.findById(dto.getId());
-            Account oldAccount = optionalAccount.get();
-            account = accountConverter.toAccount(dto, oldAccount);
-        } else {
-            dto.setState(State.PENDING);
-            account = accountConverter.toAccount(dto);
+        if (dto.getRoles() == null) {
+            dto.setRoles(new ArrayList<>());
         }
+        if (dto.getState() == null) {
+            dto.setState(State.PENDING);
+        }
+        if (findByUserName(dto.getUserName().trim()).isPresent()) {
+            throw new AccountException("Tài khoản đã tồn tại");
+        }
+        if (findByEmail(dto.getEmail().trim()).isPresent()) {
+            throw new AccountException("Email đã tồn tại");
+        }
+        List<Role> roles = new ArrayList<>();
+        List<Role> roleList = dto.getRoles();
+        if (roleList.size() > 0) {
+            roleList.forEach(role -> {
+                if ("ADMIN".equals(role.getCode())) {
+                    Role adminRole = roleService.findByCode(RoleType.ADMIN.getCode()).orElseThrow(
+                            () -> new RuntimeException("Không tìm thấy quyền " + RoleType.ADMIN.getCode())
+                    );
+                    roles.add(adminRole);
+                } else {
+                    Role userRole = roleService.findByCode(RoleType.USER.getCode()).orElseThrow(
+                            () -> new RuntimeException("Không tìm thấy quyền " + RoleType.USER.getCode())
+                    );
+                    roles.add(userRole);
+                }
+            });
+        } else {
+            Role userRole = roleService.findByCode(RoleType.USER.getCode()).orElseThrow(
+                    () -> new RuntimeException("Không tìm thấy quyền " + RoleType.USER.getCode())
+            );
+            roles.add(userRole);
+        }
+
+        dto.setRoles(roles);
+        account = accountConverter.toAccount(dto);
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
         account = accountRepository.save(account);
+        return accountConverter.toAccountDTO(account);
+    }
+
+    @Override
+    public AccountDTO update(AccountDTO dto) {
+        Account account;
+        Optional<Account> optionalAccount = accountRepository.findById(dto.getId());
+        Account oldAccount = optionalAccount.get();
+        account = accountConverter.toAccount(dto, oldAccount);
         return accountConverter.toAccountDTO(account);
     }
 
@@ -81,7 +115,12 @@ public class AccountService implements IAccountService {
 
     @Override
     public Optional<Account> findByEmail(String email) {
-        return Optional.empty();
+        return accountRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<Account> findByUserName(String username) {
+        return accountRepository.findByUserName(username);
     }
 
     @Override

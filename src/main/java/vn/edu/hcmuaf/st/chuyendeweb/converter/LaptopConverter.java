@@ -1,7 +1,7 @@
 package vn.edu.hcmuaf.st.chuyendeweb.converter;
 
 import org.springframework.stereotype.Component;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.LaptopDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 
 @Component

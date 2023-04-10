@@ -1,9 +1,12 @@
-package vn.edu.hcmuaf.st.chuyendeweb.dto;
+package vn.edu.hcmuaf.st.chuyendeweb.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
+import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Role;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +22,5 @@ public class AccountDTO extends AbstractDTO<AccountDTO>{
     private String addressDetail;
     private Integer status;
     private State state;
+    private List<Role> roles;
 }

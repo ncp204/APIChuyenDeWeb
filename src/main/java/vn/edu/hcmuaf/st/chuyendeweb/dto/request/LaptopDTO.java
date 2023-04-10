@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.st.chuyendeweb.dto;
+package vn.edu.hcmuaf.st.chuyendeweb.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -3,25 +3,30 @@ package vn.edu.hcmuaf.st.chuyendeweb.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 
-import javax.persistence.Entity;
-import javax.persistence.Column;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.ManyToMany;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+//@Table(uniqueConstraints = {
+//        @UniqueConstraint(columnNames = {"user_name"}),
+//        @UniqueConstraint(columnNames = {"email"})
+//})
 @Table
 @Getter
 @Setter
+@ToString
 public class Account extends BaseEntity {
+    @NotBlank
     @Column
     private String userName;
+    @NotBlank
     @Column
     private String password;
     @Column
@@ -29,6 +34,9 @@ public class Account extends BaseEntity {
     @Column
     private String phone;
     @Column
+    @NotBlank
+    @Email
+    @Size(max = 50)
     private String email;
     @Column
     private String sex;
@@ -40,7 +48,7 @@ public class Account extends BaseEntity {
     private Integer status;
     @Column
     private State state;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "account_role",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

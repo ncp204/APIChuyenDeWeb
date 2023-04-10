@@ -1,10 +1,8 @@
 package vn.edu.hcmuaf.st.chuyendeweb.converter;
 
 import org.springframework.stereotype.Component;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.AccountDTO;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.LaptopDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
-import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 
 @Component
 public class AccountConverter {
@@ -20,6 +18,7 @@ public class AccountConverter {
         account.setAddress(dto.getAddress());
         account.setAddressDetail(dto.getAddressDetail());
         account.setState(dto.getState());
+        account.setRoles(dto.getRoles());
         return account;
     }
 
@@ -51,6 +50,7 @@ public class AccountConverter {
         account.setAddress(dto.getAddress());
         account.setAddressDetail(dto.getAddressDetail());
         account.setState(dto.getState());
+        account.setRoles(dto.getRoles());
         return account;
     }
 }

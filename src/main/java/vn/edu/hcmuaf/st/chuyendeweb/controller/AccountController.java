@@ -1,28 +1,32 @@
 package vn.edu.hcmuaf.st.chuyendeweb.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.AccountDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ResponMessenger;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.AccountService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class AccountController {
-
-    @Autowired
-    private AccountService accountService;
-
+    private final AccountService accountService;
+    @ResponseBody
     @PostMapping("/account")
-    public AccountDTO addNewAccount(@RequestBody AccountDTO AccountDTO) {
-        return accountService.save(AccountDTO);
+    public ResponseEntity<?> register(@Valid @RequestBody AccountDTO accountDTO) {
+        accountService.addAccount(accountDTO);
+        return new ResponseEntity<>(new ResponMessenger("Tạo tài khoản thành công"), HttpStatus.OK);
     }
 
     @PutMapping("/account/{id}")
     public AccountDTO updateAccount(@RequestBody AccountDTO AccountDTO, @PathVariable("id") long id) {
         AccountDTO.setId(id);
-        return accountService.save(AccountDTO);
+        return accountService.update(AccountDTO);
     }
 
     @GetMapping("/account")

@@ -3,7 +3,7 @@ package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.st.chuyendeweb.converter.LaptopConverter;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.LaptopDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.LaptopRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.service.ILaptopService;

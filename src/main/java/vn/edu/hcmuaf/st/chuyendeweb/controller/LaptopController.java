@@ -2,7 +2,7 @@ package vn.edu.hcmuaf.st.chuyendeweb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.LaptopDTO;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.LaptopService;
 
 @RestController
