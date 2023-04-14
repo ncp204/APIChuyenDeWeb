@@ -56,4 +56,9 @@ public class LoginController {
     public String foo() {
         throw new AccountException("Không tìm thấy tài khoản");
     }
+
+    @GetMapping("test")
+    public String test() {
+        return "Xin chào NCP ";
+    }
 }
