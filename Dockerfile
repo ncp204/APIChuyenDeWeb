@@ -10,6 +10,6 @@ RUN mvn clean package -DskipTests
 #
 FROM openjdk:11-jdk-slim
 COPY --from=build /target/laptop-1.0.0.jar laptop.jar
-# ENV PORT=8080
-EXPOSE 8080
+ENV PORT=8080
+#EXPOSE 8080
 ENTRYPOINT ["java","-jar","laptop.jar"]
