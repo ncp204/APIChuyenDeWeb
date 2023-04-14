@@ -3,15 +3,27 @@ package vn.edu.hcmuaf.st.chuyendeweb.dto.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
+import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopState;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
 @Builder
 public class LaptopDTO extends AbstractDTO<LaptopDTO> {
+    @NotBlank(message = "Nhà kho không được để trống")
+    private Long facilityId;
+    @NotBlank(message = "Tên sản phẩm không được để trống")
     private String productName;
+    @NotBlank(message = "Hãng sản xuất không được để trống")
     private String brand;
+    @NotBlank(message = "Giá tiền không được để trống")
     private double price;
     private String cpu;
+    @NotBlank(message = "Loại chip CPU không được để trống")
+    private String chipCpu;
     private String ram;
     private String storage;
     private String display;
@@ -19,4 +31,9 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String color;
     private String battery;
     private String weight;
+    private LaptopState laptopState;
+    @Min(value = 1, message = "Số lượng nhập phải lớn hơn 0")
+    private int quantity;
+    @NotBlank(message = "Loại laptop không được để trống")
+    private String type;
 }

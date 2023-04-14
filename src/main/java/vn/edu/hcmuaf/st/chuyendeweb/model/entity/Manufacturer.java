@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.st.chuyendeweb.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ public class Manufacturer extends BaseEntity {
     private String name;
     @Column
     private String slogan;
+    @JsonIgnore
     @OneToMany(mappedBy = "manufacturer")
     private List<Laptop> laptops = new ArrayList<>();
 }

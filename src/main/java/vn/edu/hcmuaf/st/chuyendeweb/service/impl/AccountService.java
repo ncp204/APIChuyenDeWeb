@@ -1,22 +1,25 @@
 package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.st.chuyendeweb.converter.AccountConverter;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ResponMessenger;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.JwtResponse;
+import vn.edu.hcmuaf.st.chuyendeweb.evenlistener.AccountCreatedEvent;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.AccountException;
 import vn.edu.hcmuaf.st.chuyendeweb.model.RoleType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Role;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.AccountRepository;
-import vn.edu.hcmuaf.st.chuyendeweb.repository.RoleRepository;
+import vn.edu.hcmuaf.st.chuyendeweb.security.jwt.JwtTokenProvider;
+import vn.edu.hcmuaf.st.chuyendeweb.security.useprincal.UserPrinciple;
 import vn.edu.hcmuaf.st.chuyendeweb.service.IAccountService;
 
 import java.util.ArrayList;
@@ -31,11 +34,21 @@ public class AccountService implements IAccountService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ApplicationContext applicationContext;
 
     @Override
-    public String login(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        return "dang nhap thanh cong";
+    public JwtResponse login(String username, String password) {
+        // Kiểm tra tài khoản có đúng trạng thái hay không
+        validateAccount(username);
+        // Xác thực username và password
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        // Nếu không xảy ra exception tức là thông tin hợp lệ
+        // Set thông tin authentication vào Security Context
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtTokenProvider.generateToken(authenticate);
+        UserPrinciple userPrinciple = (UserPrinciple) authenticate.getPrincipal();
+        return new JwtResponse(token, userPrinciple.getUsername(), userPrinciple.getAuthorities());
     }
 
     @Override
@@ -93,23 +106,42 @@ public class AccountService implements IAccountService {
     public AccountDTO update(AccountDTO dto) {
         Account account;
         Optional<Account> optionalAccount = accountRepository.findById(dto.getId());
+        if (!optionalAccount.isPresent()) {
+            throw new AccountException("Không tìm thấy thông tin tài khoản với id: " + dto.getId());
+        }
         Account oldAccount = optionalAccount.get();
         account = accountConverter.toAccount(dto, oldAccount);
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
+        accountRepository.save(account);
         return accountConverter.toAccountDTO(account);
     }
 
     @Override
-    public Boolean activeAccount(String activation_code) {
+    public Boolean activeAccount(Long id, String activation_code) {
+        Optional<Account> optionalAccount = findById(id);
+        if (!optionalAccount.isPresent()) {
+            throw new AccountException("Tài khoản không tồn tại");
+        }
+        Account account = optionalAccount.get();
+
+        switch (account.getState()) {
+            case PENDING:
+                account.setState(State.ACTIVE);
+                Account newAccount = accountRepository.save(account);
+                applicationContext.publishEvent(new AccountCreatedEvent(newAccount));
+                return true;
+            case ACTIVE:
+                throw new AccountException("Tài khoản đã kích hoạt trước đó");
+            case REMOVED:
+                throw new AccountException("Tài khoản đã bị xóa");
+            case DISABLED:
+                throw new AccountException("Tài khoản đã bị khóa");
+        }
         return null;
     }
 
     @Override
     public Boolean updatePassword(String id, String password) {
-        return null;
-    }
-
-    @Override
-    public Boolean updateEmail(String id, String newEmail) {
         return null;
     }
 
@@ -124,12 +156,33 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public Account findById(String id) {
-        return null;
+    public Optional<Account> findById(Long id) {
+        Optional<Account> optionalAccount = accountRepository.findById(id);
+        if (!optionalAccount.isPresent()) {
+            throw new AccountException("Không tìm thấy tài khoản với id: " + id);
+        }
+        return optionalAccount;
     }
 
     @Override
     public List<Account> findAllAccount() {
         return accountRepository.findAll();
+    }
+
+    private void validateAccount(String username) {
+        Optional<Account> optionalAccount = findByUserName(username);
+        if (!optionalAccount.isPresent()) {
+            throw new AccountException("Tài khoản không tồn tại");
+        }
+        Account account = optionalAccount.get();
+        if (account.getState() == State.PENDING) {
+            throw new AccountException("Tài khoản chưa được kích hoạt");
+        }
+        if (account.getState() == State.DISABLED) {
+            throw new AccountException("Tài khoản đã bị khóa");
+        }
+        if (account.getState() == State.REMOVED) {
+            throw new AccountException("Tài khoản đã bị xóa");
+        }
     }
 }

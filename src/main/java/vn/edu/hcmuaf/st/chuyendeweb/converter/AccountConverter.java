@@ -9,16 +9,7 @@ public class AccountConverter {
 
     public Account toAccount(AccountDTO dto) {
         Account account = new Account();
-        account.setUserName(dto.getUserName());
-        account.setPassword(dto.getPassword());
-        account.setFullName(dto.getFullName());
-        account.setPhone(dto.getPhone());
-        account.setEmail(dto.getEmail());
-        account.setSex(dto.getSex());
-        account.setAddress(dto.getAddress());
-        account.setAddressDetail(dto.getAddressDetail());
-        account.setState(dto.getState());
-        account.setRoles(dto.getRoles());
+        account = toAccount(dto, account);
         return account;
     }
 
@@ -41,16 +32,36 @@ public class AccountConverter {
     }
 
     public Account toAccount(AccountDTO dto, Account account) {
-        account.setUserName(dto.getUserName());
-        account.setPassword(dto.getPassword());
-        account.setFullName(dto.getFullName());
-        account.setPhone(dto.getPhone());
-        account.setEmail(dto.getEmail());
-        account.setSex(dto.getSex());
-        account.setAddress(dto.getAddress());
-        account.setAddressDetail(dto.getAddressDetail());
-        account.setState(dto.getState());
-        account.setRoles(dto.getRoles());
+        if (dto.getUserName() != null && dto.getUserName().trim().length() > 0) {
+            account.setUserName(dto.getUserName());
+        }
+        if (dto.getPassword() != null && dto.getPassword().trim().length() > 0) {
+            account.setPassword(dto.getPassword());
+        }
+        if (dto.getFullName() != null && dto.getFullName().trim().length() > 0) {
+            account.setFullName(dto.getFullName());
+        }
+        if (dto.getPhone() != null && dto.getPhone().trim().length() > 0) {
+            account.setPhone(dto.getPhone());
+        }
+        if (dto.getEmail() != null && dto.getEmail().trim().length() > 0) {
+            account.setEmail(dto.getEmail());
+        }
+        if (dto.getSex() != null && dto.getSex().trim().length() > 0) {
+            account.setSex(dto.getSex());
+        }
+        if (dto.getAddress() != null && dto.getAddress().trim().length() > 0) {
+            account.setAddress(dto.getAddress());
+        }
+        if (dto.getAddressDetail() != null && dto.getAddressDetail().trim().length() > 0) {
+            account.setAddressDetail(dto.getAddressDetail());
+        }
+        if (dto.getState() != null) {
+            account.setState(dto.getState());
+        }
+        if (dto.getRoles() != null && dto.getRoles().size() > 0) {
+            account.setRoles(dto.getRoles());
+        }
         return account;
     }
 }

@@ -1,16 +1,18 @@
 package vn.edu.hcmuaf.st.chuyendeweb.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,9 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import vn.edu.hcmuaf.st.chuyendeweb.security.jwt.JwtEntryPoint;
 import vn.edu.hcmuaf.st.chuyendeweb.security.jwt.JwtTokenFilter;
 
+import java.util.Optional;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     private final UserDetailsService userDetailsService;
@@ -30,19 +35,12 @@ public class WebSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.csrf().disable()
-//                .formLogin()
-//                .and()
-//                .authorizeRequests()
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("**").permitAll()
-//                .anyRequest().authenticated();
-//                .and()
-//                .apply(jwtConfig);
-
-        http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("**").permitAll()
+        http.cors().and().csrf().disable().formLogin()
+                .and().authorizeRequests()
+                .antMatchers("**").permitAll()
+//                .antMatchers("/login").permitAll()
+//                .antMatchers("/account").permitAll()
+//                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(jwtEntryPoint)
@@ -61,5 +59,22 @@ public class WebSecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuditorAware<String> auditorProvider() {
+        return new AuditorAwareImpl();
+    }
+
+    public static class AuditorAwareImpl implements AuditorAware<String> {
+
+        @Override
+        public Optional<String> getCurrentAuditor() {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if(authentication == null || !authentication.isAuthenticated()) {
+                return null;
+            }
+            return Optional.ofNullable(authentication.getName());
+        }
     }
 }

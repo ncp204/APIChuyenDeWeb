@@ -14,27 +14,39 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/account")
 public class AccountController {
     private final AccountService accountService;
+
     @ResponseBody
-    @PostMapping("/account")
+    @PostMapping("")
     public ResponseEntity<?> register(@Valid @RequestBody AccountDTO accountDTO) {
         accountService.addAccount(accountDTO);
         return new ResponseEntity<>(new ResponMessenger("Tạo tài khoản thành công"), HttpStatus.OK);
     }
 
-    @PutMapping("/account/{id}")
-    public AccountDTO updateAccount(@RequestBody AccountDTO AccountDTO, @PathVariable("id") long id) {
-        AccountDTO.setId(id);
-        return accountService.update(AccountDTO);
+    @PutMapping("{id}")
+    public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable("id") long id) {
+        accountDTO.setId(id);
+        return accountService.update(accountDTO);
     }
 
-    @GetMapping("/account")
-    public List<Account> getAccount() {
+    @GetMapping("accounts")
+    public List<Account> getAccounts() {
         return accountService.findAllAccount();
     }
 
-    @DeleteMapping("/account")
+    @GetMapping("{id}")
+    public Account getAccount(@RequestBody @PathVariable("id") Long id) {
+        return accountService.findById(id).get();
+    }
+
+    @PutMapping("state/{id}")
+    public String activeAccount(@RequestBody @PathVariable("id") Long id) {
+        return accountService.activeAccount(id, "") ? "Đã kích hoạt tài khoản, vui lòng đăng nhập" : "Đã xảy ra lỗi";
+    }
+
+    @DeleteMapping("")
     public void deleteAccount(@RequestBody Long... ids) {
 
     }

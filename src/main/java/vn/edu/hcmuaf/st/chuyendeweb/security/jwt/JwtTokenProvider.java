@@ -1,8 +1,5 @@
 package vn.edu.hcmuaf.st.chuyendeweb.security.jwt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
@@ -44,19 +41,6 @@ public class JwtTokenProvider {
             log.error("Chuỗi yêu cầu trống");
         }
         return false;
-    }
-
-    // Tạo ra jwt từ thông tin user
-    public String generateToken(UserPrinciple userPrinciple) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
-        // Tạo chuỗi json web token từ id của user.
-        return Jwts.builder()
-                .setSubject(Long.toString(userPrinciple.getAccount().getId()))
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
-                .compact();
     }
 
     // Lấy thông tin user từ jwt

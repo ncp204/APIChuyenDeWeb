@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.st.chuyendeweb.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ public class Role extends BaseEntity {
     private String code;
     @Column
     private String nameCode;
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private List<Account> accounts = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.st.chuyendeweb.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,10 +19,11 @@ public class Cart extends BaseEntity {
     private Date exportDate;
     @Column
     private double totalAmount;
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "account_id")
     private Account account;
-
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "cart_laptop",

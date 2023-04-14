@@ -9,17 +9,7 @@ public class LaptopConverter {
 
     public Laptop toLaptop(LaptopDTO dto) {
         Laptop laptop = new Laptop();
-        laptop.setProductName(dto.getProductName());
-        laptop.setBrand(dto.getBrand());
-        laptop.setPrice(dto.getPrice());
-        laptop.setCpu(dto.getCpu());
-        laptop.setRam(dto.getRam());
-        laptop.setStorage(dto.getStorage());
-        laptop.setDisplay(dto.getDisplay());
-        laptop.setGraphics(dto.getGraphics());
-        laptop.setColor(dto.getColor());
-        laptop.setBattery(dto.getBattery());
-        laptop.setWeight(dto.getWeight());
+        laptop = toLaptop(dto, laptop);
         return laptop;
     }
 
@@ -32,6 +22,7 @@ public class LaptopConverter {
         dto.setBrand(laptop.getBrand());
         dto.setPrice(laptop.getPrice());
         dto.setCpu(laptop.getCpu());
+        dto.setChipCpu(laptop.getChipCpu());
         dto.setRam(laptop.getRam());
         dto.setStorage(laptop.getStorage());
         dto.setDisplay(laptop.getDisplay());
@@ -43,6 +34,14 @@ public class LaptopConverter {
         dto.setCreateBy(laptop.getCreateBy());
         dto.setModifiedBy(laptop.getModifiedBy());
         dto.setModifiedDate(laptop.getModifiedDate());
+        dto.setFacilityId(laptop.getFacility().getId());
+        dto.setLaptopState(laptop.getLaptopState());
+        dto.setQuantity(laptop.getQuantity());
+        dto.setCreateBy(laptop.getCreateBy());
+        dto.setCreatedDate(laptop.getCreatedDate());
+        dto.setModifiedBy(laptop.getModifiedBy());
+        dto.setModifiedDate(laptop.getModifiedDate());
+        dto.setType(laptop.getType());
         return dto;
     }
 
@@ -58,6 +57,10 @@ public class LaptopConverter {
         laptop.setColor(dto.getColor());
         laptop.setBattery(dto.getBattery());
         laptop.setWeight(dto.getWeight());
+        laptop.setLaptopState(dto.getLaptopState());
+        laptop.setQuantity(dto.getQuantity());
+        laptop.setType(dto.getType());
+        laptop.setChipCpu(dto.getChipCpu());
         return laptop;
     }
 }

@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.st.chuyendeweb.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -45,14 +46,14 @@ public class Account extends BaseEntity {
     @Column
     private String addressDetail;
     @Column
-    private Integer status;
-    @Column
     private State state;
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "account_role",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
+    @JsonIgnore
     @OneToOne(mappedBy = "account")
     private Cart cart;
 }
