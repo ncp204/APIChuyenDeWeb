@@ -2,6 +2,8 @@ package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -172,7 +174,7 @@ public class AccountService implements IAccountService {
     private void validateAccount(String username) {
         Optional<Account> optionalAccount = findByUserName(username);
         if (!optionalAccount.isPresent()) {
-            throw new AccountException("Tài khoản không tồn tại");
+            throw new AccountException("Không tìm thấy tài khoản");
         }
         Account account = optionalAccount.get();
         if (account.getState() == State.PENDING) {

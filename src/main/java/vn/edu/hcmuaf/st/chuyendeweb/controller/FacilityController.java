@@ -9,6 +9,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.service.impl.FacilityService;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 public class FacilityController {
     private final FacilityService facilityService;

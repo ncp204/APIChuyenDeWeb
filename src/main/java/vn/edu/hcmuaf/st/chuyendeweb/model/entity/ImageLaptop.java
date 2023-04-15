@@ -14,7 +14,7 @@ public class ImageLaptop extends BaseEntity {
     @Column
     String linkImage;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "laptop_id")
     private Laptop laptop;
 }

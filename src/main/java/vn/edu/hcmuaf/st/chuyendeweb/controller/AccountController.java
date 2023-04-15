@@ -13,25 +13,26 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RequestMapping("/account")
 public class AccountController {
     private final AccountService accountService;
 
     @ResponseBody
-    @PostMapping("")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AccountDTO accountDTO) {
         accountService.addAccount(accountDTO);
         return new ResponseEntity<>(new ResponMessenger("Tạo tài khoản thành công"), HttpStatus.OK);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/update/{id}")
     public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable("id") long id) {
         accountDTO.setId(id);
         return accountService.update(accountDTO);
     }
 
-    @GetMapping("accounts")
+    @GetMapping("list")
     public List<Account> getAccounts() {
         return accountService.findAllAccount();
     }

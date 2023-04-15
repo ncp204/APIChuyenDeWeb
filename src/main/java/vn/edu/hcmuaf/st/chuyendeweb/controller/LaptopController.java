@@ -2,6 +2,7 @@ package vn.edu.hcmuaf.st.chuyendeweb.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "*")
 public class LaptopController {
     private final LaptopService laptopService;
 
@@ -31,8 +33,9 @@ public class LaptopController {
     }
 
     @GetMapping("/laptop")
-    public List<Laptop> getLaptop(@RequestBody LaptopFilter filter) {
-        return laptopService.getAllLaptop(filter);
+    public List<Laptop> getLaptop(@RequestBody LaptopFilter filter, @RequestParam("start") int start, @RequestParam("limit") int limit ) {
+        Page<Laptop> laptopPage = laptopService.getAllLaptop(filter, start, limit);
+        return laptopPage.getContent();
     }
 
     @GetMapping("/laptop/brand")

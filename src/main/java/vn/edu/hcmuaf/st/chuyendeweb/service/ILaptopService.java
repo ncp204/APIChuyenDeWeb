@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.st.chuyendeweb.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface ILaptopService {
     LaptopDTO save(LaptopDTO laptopDTO);
 
-    List<Laptop> getAllLaptop(LaptopFilter filter);
+    Page<Laptop> getAllLaptop(LaptopFilter filter, int start, int limit);
 
     List<String> getAllBrand();
 

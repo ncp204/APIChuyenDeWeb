@@ -8,6 +8,8 @@ import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopState;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,6 +34,7 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String battery;
     private String weight;
     private LaptopState laptopState;
+    private List<String> listImages = new ArrayList<>();
     @Min(value = 1, message = "Số lượng nhập phải lớn hơn 0")
     private int quantity;
     @NotBlank(message = "Loại laptop không được để trống")

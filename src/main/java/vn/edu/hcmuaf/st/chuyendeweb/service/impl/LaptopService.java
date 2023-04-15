@@ -1,13 +1,16 @@
 package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.st.chuyendeweb.converter.LaptopConverter;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
 import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Facility;
+import vn.edu.hcmuaf.st.chuyendeweb.model.entity.ImageLaptop;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.FacilityRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.LaptopRepository;
@@ -42,16 +45,22 @@ public class LaptopService implements ILaptopService {
         }
         laptop.setFacility(optionalFacility.get());
         laptop = laptopRepository.save(laptop);
+        List<ImageLaptop> imageLaptops = new ArrayList<>();
+        ImageLaptop imageLaptop = null;
+        for(String image : laptopDTO.getListImages()) {
+            imageLaptop = new ImageLaptop();
+            imageLaptop.setLaptop(laptop);
+            imageLaptop.setLinkImage(image);
+            imageLaptops.add(imageLaptop);
+        }
+
         return laptopConverter.toLaptopDTO(laptop);
     }
 
     @Override
-    public List<Laptop> getAllLaptop(LaptopFilter filter) {
-        if (filter.getTypes().isEmpty() && filter.getBrands().isEmpty() && filter.getChipCpus().isEmpty()) {
-            return laptopRepository.findAll();
-        }
-        List<Laptop> laptops = filterListRepository.findWithFilter(filter.getTypes(), filter.getBrands(), filter.getChipCpus());
-        return laptops;
+    public Page<Laptop> getAllLaptop(LaptopFilter filter, int start, int limit) {
+        Page<Laptop> laptopPage = filterListRepository.findTest(filter.getTypes(), filter.getBrands(), filter.getChipCpus(), start - 1, limit);
+        return laptopPage;
     }
 
     @Override

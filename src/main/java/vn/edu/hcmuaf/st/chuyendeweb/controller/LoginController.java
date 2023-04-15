@@ -22,6 +22,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @Controller
+@CrossOrigin(origins = "*")
 @RequestMapping("/")
 public class LoginController {
     private final IAccountService accountService;
