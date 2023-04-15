@@ -83,10 +83,10 @@ public class AccountService implements IAccountService {
             dto.setState(State.PENDING);
         }
         if (findByUserName(dto.getUserName().trim()).isPresent()) {
-            throw new AccountException("Tài khoản đã tồn tại");
+            throw new ServiceException(HttpStatus.FOUND, "Tên tài khoản đã tồn tại");
         }
         if (findByEmail(dto.getEmail().trim()).isPresent()) {
-            throw new AccountException("Email đã tồn tại");
+            throw new ServiceException(HttpStatus.FOUND, "Email đã tồn tại");
         }
         List<Role> roles = new ArrayList<>();
         List<Role> roleList = dto.getRoles();
@@ -94,19 +94,19 @@ public class AccountService implements IAccountService {
             roleList.forEach(role -> {
                 if ("ADMIN".equals(role.getCode())) {
                     Role adminRole = roleService.findByCode(RoleType.ADMIN.getCode()).orElseThrow(
-                            () -> new RuntimeException("Không tìm thấy quyền " + RoleType.ADMIN.getCode())
+                            () ->  new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.ADMIN.getCode())
                     );
                     roles.add(adminRole);
                 } else {
                     Role userRole = roleService.findByCode(RoleType.USER.getCode()).orElseThrow(
-                            () -> new RuntimeException("Không tìm thấy quyền " + RoleType.USER.getCode())
+                            () -> new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.USER.getCode())
                     );
                     roles.add(userRole);
                 }
             });
         } else {
             Role userRole = roleService.findByCode(RoleType.USER.getCode()).orElseThrow(
-                    () -> new RuntimeException("Không tìm thấy quyền " + RoleType.USER.getCode())
+                    () -> new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.USER.getCode())
             );
             roles.add(userRole);
         }
@@ -123,7 +123,7 @@ public class AccountService implements IAccountService {
         Account account;
         Optional<Account> optionalAccount = accountRepository.findById(dto.getId());
         if (!optionalAccount.isPresent()) {
-            throw new AccountException("Không tìm thấy thông tin tài khoản với id: " + dto.getId());
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản với id: " + dto.getId());
         }
         Account oldAccount = optionalAccount.get();
         account = accountConverter.toAccount(dto, oldAccount);
