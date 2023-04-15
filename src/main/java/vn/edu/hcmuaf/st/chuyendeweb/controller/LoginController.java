@@ -2,19 +2,13 @@ package vn.edu.hcmuaf.st.chuyendeweb.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.st.chuyendeweb.dto.response.JwtResponse;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.AccountException;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LoginForm;
 import vn.edu.hcmuaf.st.chuyendeweb.security.jwt.JwtTokenProvider;
-import vn.edu.hcmuaf.st.chuyendeweb.security.useprincal.UserPrinciple;
 import vn.edu.hcmuaf.st.chuyendeweb.service.IAccountService;
 import vn.edu.hcmuaf.st.chuyendeweb.service.IRoleService;
 
@@ -29,7 +23,6 @@ public class LoginController {
     private final IRoleService roleService;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping
@@ -37,8 +30,12 @@ public class LoginController {
         return "index";
     }
 
-    @GetMapping("login")
-    public String showLogin() {
+    @GetMapping("login-re")
+    public String showLogin(@RequestParam(required = false) String username) {
+        String token = accountService.getOldToken(username + "");
+        if (jwtTokenProvider.validateToken(token)) {
+            return "index";
+        }
         return "login";
     }
 

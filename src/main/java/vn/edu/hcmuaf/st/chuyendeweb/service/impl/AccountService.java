@@ -1,12 +1,13 @@
 package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.response.JwtResponse;
 import vn.edu.hcmuaf.st.chuyendeweb.evenlistener.AccountCreatedEvent;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.AccountException;
+import vn.edu.hcmuaf.st.chuyendeweb.exception.ServiceException;
 import vn.edu.hcmuaf.st.chuyendeweb.model.RoleType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
@@ -24,9 +26,8 @@ import vn.edu.hcmuaf.st.chuyendeweb.security.jwt.JwtTokenProvider;
 import vn.edu.hcmuaf.st.chuyendeweb.security.useprincal.UserPrinciple;
 import vn.edu.hcmuaf.st.chuyendeweb.service.IAccountService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,14 @@ public class AccountService implements IAccountService {
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationContext applicationContext;
 
+    //
+    private final Map<String, String> tokenLoginMap = new HashMap<>();
+
+    @Override
+    public String getOldToken(String username) {
+        return tokenLoginMap.get(username);
+    }
+
     @Override
     public JwtResponse login(String username, String password) {
         // Kiểm tra tài khoản có đúng trạng thái hay không
@@ -47,10 +56,15 @@ public class AccountService implements IAccountService {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         // Nếu không xảy ra exception tức là thông tin hợp lệ
         // Set thông tin authentication vào Security Context
+
+        String tokenUser = tokenLoginMap.get(username);
+        if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
+            tokenUser = jwtTokenProvider.generateToken(authenticate);
+            tokenLoginMap.put(username, tokenUser);
+        }
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-        String token = jwtTokenProvider.generateToken(authenticate);
         UserPrinciple userPrinciple = (UserPrinciple) authenticate.getPrincipal();
-        return new JwtResponse(token, userPrinciple.getUsername(), userPrinciple.getAuthorities());
+        return new JwtResponse(tokenUser, userPrinciple.getUsername(), userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 
     @Override
@@ -173,8 +187,9 @@ public class AccountService implements IAccountService {
 
     private void validateAccount(String username) {
         Optional<Account> optionalAccount = findByUserName(username);
-        if (!optionalAccount.isPresent()) {
-            throw new AccountException("Không tìm thấy tài khoản");
+        if (optionalAccount.isEmpty()) {
+//            throw new AccountException("Không tìm thấy tài khoản");
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy tài khoản");
         }
         Account account = optionalAccount.get();
         if (account.getState() == State.PENDING) {

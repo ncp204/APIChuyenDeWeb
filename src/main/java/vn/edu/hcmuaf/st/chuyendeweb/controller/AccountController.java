@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ResponMessenger;
+import vn.edu.hcmuaf.st.chuyendeweb.exception.AccountException;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.AccountService;
 
@@ -19,11 +20,14 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
-    @ResponseBody
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AccountDTO accountDTO) {
-        accountService.addAccount(accountDTO);
-        return new ResponseEntity<>(new ResponMessenger("Tạo tài khoản thành công"), HttpStatus.OK);
+        try {
+            accountService.addAccount(accountDTO);
+            return new ResponseEntity<>(new ResponMessenger("Tạo tài khoản thành công"), HttpStatus.OK);
+        } catch (AccountException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/update/{id}")
