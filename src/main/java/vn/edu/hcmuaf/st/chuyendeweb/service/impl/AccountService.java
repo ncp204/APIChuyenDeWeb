@@ -186,7 +186,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public void sendCodeToEmail(String username) {
+    public void sendCodeToEmail(String host, String username) {
         Account account = accountRepository.findByUserName(username).get();
         if (account == null) {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại");
@@ -197,7 +197,7 @@ public class AccountService implements IAccountService {
         accountRepository.save(account);
 
         String email = account.getEmail().trim();
-        String resetLink = "http://localhost:8085/reset-password?token=" + token;
+        String resetLink = host + "?token=" + token;
 
 
         String subject = "Xác thực thay đổi mật khẩu";

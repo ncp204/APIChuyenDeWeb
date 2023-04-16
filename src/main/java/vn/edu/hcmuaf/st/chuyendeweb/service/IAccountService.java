@@ -30,7 +30,7 @@ public interface IAccountService {
 
     List<Account> findAllAccount();
 
-    void sendCodeToEmail(String token);
+    void sendCodeToEmail(String host, String token);
 
     void processResetPassword(String token, String password);
 }
