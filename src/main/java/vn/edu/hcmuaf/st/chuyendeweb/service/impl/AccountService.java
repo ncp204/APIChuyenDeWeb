@@ -52,7 +52,12 @@ public class AccountService implements IAccountService {
         // Kiểm tra tài khoản có đúng trạng thái hay không
         validateAccount(username);
         // Xác thực username và password
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        Authentication authenticate = null;
+        try {
+            authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (Exception e) {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Sai mật khẩu, vui lòng thử lại");
+        }
         // Nếu không xảy ra exception tức là thông tin hợp lệ
         // Set thông tin authentication vào Security Context
 
