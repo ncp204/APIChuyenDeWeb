@@ -1,6 +1,5 @@
 package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,8 @@ import vn.edu.hcmuaf.st.chuyendeweb.converter.AccountConverter;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.AccountDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.response.JwtResponse;
 import vn.edu.hcmuaf.st.chuyendeweb.evenlistener.AccountCreatedEvent;
-import vn.edu.hcmuaf.st.chuyendeweb.exception.AccountException;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.ServiceException;
+import vn.edu.hcmuaf.st.chuyendeweb.mail.GMailer;
 import vn.edu.hcmuaf.st.chuyendeweb.model.RoleType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
@@ -40,8 +39,8 @@ public class AccountService implements IAccountService {
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationContext applicationContext;
 
-    //
     private final Map<String, String> tokenLoginMap = new HashMap<>();
+    private final Map<String, String> authenMap = new HashMap<>();
 
     @Override
     public String getOldToken(String username) {
@@ -68,7 +67,8 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public boolean logout(String id) {
+    public boolean logout(String username) {
+        tokenLoginMap.remove(username);
         return false;
     }
 
@@ -94,7 +94,7 @@ public class AccountService implements IAccountService {
             roleList.forEach(role -> {
                 if ("ADMIN".equals(role.getCode())) {
                     Role adminRole = roleService.findByCode(RoleType.ADMIN.getCode()).orElseThrow(
-                            () ->  new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.ADMIN.getCode())
+                            () -> new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.ADMIN.getCode())
                     );
                     roles.add(adminRole);
                 } else {
@@ -135,8 +135,8 @@ public class AccountService implements IAccountService {
     @Override
     public Boolean activeAccount(Long id, String activation_code) {
         Optional<Account> optionalAccount = findById(id);
-        if (!optionalAccount.isPresent()) {
-            throw new AccountException("Tài khoản không tồn tại");
+        if (optionalAccount.isEmpty()) {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Tài khoản không tồn tại");
         }
         Account account = optionalAccount.get();
 
@@ -147,11 +147,11 @@ public class AccountService implements IAccountService {
                 applicationContext.publishEvent(new AccountCreatedEvent(newAccount));
                 return true;
             case ACTIVE:
-                throw new AccountException("Tài khoản đã kích hoạt trước đó");
+                throw new ServiceException(HttpStatus.BAD_REQUEST, "Tài khoản đã kích hoạt trước đó");
             case REMOVED:
-                throw new AccountException("Tài khoản đã bị xóa");
+                throw new ServiceException(HttpStatus.BAD_REQUEST, "Tài khoản đã bị xóa");
             case DISABLED:
-                throw new AccountException("Tài khoản đã bị khóa");
+                throw new ServiceException(HttpStatus.BAD_REQUEST, "Tài khoản đã bị khóa");
         }
         return null;
     }
@@ -174,8 +174,8 @@ public class AccountService implements IAccountService {
     @Override
     public Optional<Account> findById(Long id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
-        if (!optionalAccount.isPresent()) {
-            throw new AccountException("Không tìm thấy tài khoản với id: " + id);
+        if (optionalAccount.isEmpty()) {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy tài khoản với id: " + id);
         }
         return optionalAccount;
     }
@@ -185,21 +185,60 @@ public class AccountService implements IAccountService {
         return accountRepository.findAll();
     }
 
+    @Override
+    public void sendCodeToEmail(String username) {
+        Account account = accountRepository.findByUserName(username).get();
+        if (account == null) {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại");
+        }
+
+        String token = jwtTokenProvider.generateToken(account.getUserName());
+        account.setResetToken(token);
+        accountRepository.save(account);
+
+        String email = account.getEmail().trim();
+        String resetLink = "http://localhost:8085/reset-password?token=" + token;
+
+
+        String subject = "Xác thực thay đổi mật khẩu";
+        String body = "Để thay đổi mật khẩu, vui lòng nhấp vào link phía dưới để xác thực(Chỉ có hiệu lực 2 phút): \r\n" +
+                resetLink;
+        try {
+            new GMailer().sendMail(email, subject, body);
+        } catch (Exception e) {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Có lỗi xảy ra, không thể gửi mail");
+        }
+    }
+
+    @Override
+    public void processResetPassword(String token, String password) {
+        if (jwtTokenProvider.validateToken(token)) {
+            password = password.trim();
+            String username = jwtTokenProvider.getUserNameFromToken(token);
+            Account account = accountRepository.findByUserName(username).get();
+            account.setPassword(passwordEncoder.encode(password));
+            accountRepository.save(account);
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Token không hợp lệ hoặc đã hết hiệu lực");
+        }
+    }
+
     private void validateAccount(String username) {
         Optional<Account> optionalAccount = findByUserName(username);
         if (optionalAccount.isEmpty()) {
-//            throw new AccountException("Không tìm thấy tài khoản");
             throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy tài khoản");
         }
         Account account = optionalAccount.get();
         if (account.getState() == State.PENDING) {
-            throw new AccountException("Tài khoản chưa được kích hoạt");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản chưa được kích hoạt");
         }
         if (account.getState() == State.DISABLED) {
-            throw new AccountException("Tài khoản đã bị khóa");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản đã bị khóa");
         }
         if (account.getState() == State.REMOVED) {
-            throw new AccountException("Tài khoản đã bị xóa");
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản đã bị xóa");
         }
     }
+
+
 }

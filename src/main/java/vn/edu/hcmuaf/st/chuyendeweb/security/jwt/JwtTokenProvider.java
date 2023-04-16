@@ -16,12 +16,23 @@ public class JwtTokenProvider {
     //Thời gian có hiệu lực của chuỗi jwt, 86400 = 1 ngày
     private final int JWT_EXPIRATION = 86400;
 
+    private final int JWT_EXPIRATION_2M = 120;
+
     // Tạo ra jwt từ thông tin user
     public String generateToken(Authentication authentication) {
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
         return Jwts.builder().setSubject(userPrinciple.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + JWT_EXPIRATION * 1000))
+                .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                .compact();
+    }
+
+    // Tạo ra jwt từ thông tin user với thời gian 2 phút
+    public String generateToken(String username) {
+        return Jwts.builder().setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + JWT_EXPIRATION_2M * 1000))
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
                 .compact();
     }

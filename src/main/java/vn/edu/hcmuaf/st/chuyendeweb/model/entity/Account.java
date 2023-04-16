@@ -47,6 +47,8 @@ public class Account extends BaseEntity {
     private String addressDetail;
     @Column
     private State state;
+    @Column
+    private  String resetToken;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "account_role",

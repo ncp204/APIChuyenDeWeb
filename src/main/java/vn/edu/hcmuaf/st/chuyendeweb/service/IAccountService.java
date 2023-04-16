@@ -29,4 +29,8 @@ public interface IAccountService {
     Optional<Account> findById(Long id);
 
     List<Account> findAllAccount();
+
+    void sendCodeToEmail(String token);
+
+    void processResetPassword(String token, String password);
 }

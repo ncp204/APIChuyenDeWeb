@@ -16,11 +16,10 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-@RequestMapping("/account")
 public class AccountController {
     private final AccountService accountService;
 
-    @PostMapping("/register")
+    @PostMapping("/account/register")
     public ResponseEntity<?> register(@Valid @RequestBody AccountDTO accountDTO) {
         try {
             accountService.addAccount(accountDTO);
@@ -30,23 +29,23 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/account/update/{id}")
     public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable("id") long id) {
         accountDTO.setId(id);
         return accountService.update(accountDTO);
     }
 
-    @GetMapping("list")
+    @GetMapping("/account/list")
     public List<Account> getAccounts() {
         return accountService.findAllAccount();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/account/{id}")
     public Account getAccount(@RequestBody @PathVariable("id") Long id) {
         return accountService.findById(id).get();
     }
 
-    @PutMapping("state/{id}")
+    @PutMapping("/account/state/{id}")
     public String activeAccount(@RequestBody @PathVariable("id") Long id) {
         return accountService.activeAccount(id, "") ? "Đã kích hoạt tài khoản, vui lòng đăng nhập" : "Đã xảy ra lỗi";
     }
@@ -54,5 +53,17 @@ public class AccountController {
     @DeleteMapping("")
     public void deleteAccount(@RequestBody Long... ids) {
 
+    }
+
+    @PostMapping("/account/changePassword")
+    public ResponseEntity<?> changePassword(@RequestParam String username) {
+        accountService.sendCodeToEmail(username);
+        return new ResponseEntity<>(new ResponMessenger("Đã gửi mã xác thực qua email của bạn, vui lòng kiểm tra emaail"), HttpStatus.OK);
+    }
+
+    @PostMapping("/account/reset-password")
+    public ResponseEntity<?> processResetPassword(@RequestParam("token") String token, @RequestParam("password") String password) {
+        accountService.processResetPassword(token, password);
+        return new ResponseEntity<>(new ResponMessenger("Thay đổi mật khẩu thành công"), HttpStatus.OK);
     }
 }
