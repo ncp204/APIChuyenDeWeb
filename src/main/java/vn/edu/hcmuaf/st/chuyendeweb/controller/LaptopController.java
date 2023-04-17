@@ -7,12 +7,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
+import vn.edu.hcmuaf.st.chuyendeweb.model.ImageModel;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.paging.output.LaptopOutput;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.LaptopService;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -22,7 +26,9 @@ public class LaptopController {
     private final LaptopService laptopService;
 
     @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) {
+    public LaptopDTO addNewLaptop(@RequestParam("files") MultipartFile[] files, @RequestBody LaptopDTO laptopDTO) throws IOException {
+
+
         return laptopService.save(laptopDTO);
     }
 

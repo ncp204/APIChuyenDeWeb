@@ -12,6 +12,8 @@ import javax.persistence.*;
 @Setter
 public class ImageLaptop extends BaseEntity {
     @Column
+    String imageName;
+    @Column
     String linkImage;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

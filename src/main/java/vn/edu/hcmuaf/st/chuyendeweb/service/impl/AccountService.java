@@ -192,10 +192,11 @@ public class AccountService implements IAccountService {
 
     @Override
     public void sendCodeToEmail(String host, String username) {
-        Account account = accountRepository.findByUserName(username).get();
-        if (account == null) {
+        Optional<Account> accountOptional = accountRepository.findByUserName(username.trim());
+        if(accountOptional.isEmpty()) {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại");
         }
+        Account account = accountOptional.get();
 
         String token = jwtTokenProvider.generateToken(account.getUserName());
         account.setResetToken(token);
