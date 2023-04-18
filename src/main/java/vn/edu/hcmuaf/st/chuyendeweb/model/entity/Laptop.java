@@ -50,16 +50,16 @@ public class Laptop extends BaseEntity {
     private int quantity;
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "manufacture_id")
-    private Manufacturer manufacturer;
-    @JsonIgnore
-    @ManyToOne
+    @NotNull
     @JoinColumn(name = "faility_id")
     private Facility facility;
     @JsonIgnore
     @OneToMany(mappedBy = "laptop")
     private List<ImageLaptop> images = new ArrayList<>();
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "laptops")
+//    private List<Cart> carts = new ArrayList<>();
     @JsonIgnore
-    @ManyToMany(mappedBy = "laptops")
-    private List<Cart> carts = new ArrayList<>();
+    @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
+    private List<CartLaptop> cartLaptops;
 }

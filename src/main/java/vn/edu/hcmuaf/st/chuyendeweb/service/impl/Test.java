@@ -17,14 +17,16 @@ public class Test {
                 "api_secret", "Rxu7XVXAxkeUXoEcwgt1s4dSpAs"));
 
         try {
-            File file = new File("D:\\chuyenDeWeb\\git\\APIChuyenDeWeb\\src\\main\\resources\\images\\gravity falls.jpg");
-            String fileName = file.getName().substring(0, file.getName().lastIndexOf("."));
-            Map params = ObjectUtils.asMap(
-                    "public_id", fileName+" 2"
-            );
-            Map uploadResult = cloudinary.uploader().upload(file, params);
-            String linkImage = (String) uploadResult.get("url");
-            System.out.println("\r\n"+linkImage +" hahahahaha");
+            for(int i=10; i <= 100; i++) {
+                File file = new File("C:\\Users\\giodo\\OneDrive\\Máy tính\\gravity falls.jpg");
+                String fileName = file.getName().substring(0, file.getName().lastIndexOf("."));
+                Map params = ObjectUtils.asMap(
+                        "public_id", fileName+" "+i
+                );
+                Map uploadResult = cloudinary.uploader().upload(file, params);
+                String linkImage = (String) uploadResult.get("url");
+                System.out.println("\r\n"+linkImage +" hahahahaha");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

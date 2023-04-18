@@ -23,6 +23,7 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String brand;
     @NotBlank(message = "Giá tiền không được để trống")
     private double price;
+    private double totalAmout;
     private String cpu;
     @NotBlank(message = "Loại chip CPU không được để trống")
     private String chipCpu;

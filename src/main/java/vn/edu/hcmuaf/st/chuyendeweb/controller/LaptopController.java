@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
+import vn.edu.hcmuaf.st.chuyendeweb.hash.Hashing;
+import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
 import vn.edu.hcmuaf.st.chuyendeweb.model.ImageModel;
+import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.paging.output.LaptopOutput;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.LaptopService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,11 +27,15 @@ import java.util.List;
 public class LaptopController {
     private final LaptopService laptopService;
 
+//    @PostMapping("/laptop")
+//    public LaptopDTO addNewLaptop(@RequestParam("files") MultipartFile[] files, @RequestBody LaptopDTO laptopDTO) throws IOException {
+//        return laptopService.addLaptop(laptopDTO, files);
+//    }
+
     @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestParam("files") MultipartFile[] files, @RequestBody LaptopDTO laptopDTO) throws IOException {
-
-
-        return laptopService.save(laptopDTO);
+    public LaptopDTO addNewLaptop( @RequestBody LaptopDTO laptopDTO) throws IOException {
+        MultipartFile[] files = new MultipartFile[2];
+        return laptopService.addLaptop(laptopDTO, files);
     }
 
     @PutMapping("/laptop/{id}")
@@ -39,7 +45,7 @@ public class LaptopController {
     }
 
     @GetMapping("/laptop")
-    public List<Laptop> getLaptop(@RequestBody LaptopFilter filter, @RequestParam("start") int start, @RequestParam("limit") int limit ) {
+    public List<Laptop> getLaptop(@RequestBody LaptopFilter filter, @RequestParam("start") int start, @RequestParam("limit") int limit) {
         Page<Laptop> laptopPage = laptopService.getAllLaptop(filter, start, limit);
         return laptopPage.getContent();
     }
@@ -58,9 +64,28 @@ public class LaptopController {
     public LaptopOutput showLaptop(@RequestParam("page") int page, @RequestParam("limit") int limit) {
         LaptopOutput result = new LaptopOutput();
         result.setPage(page);
-        Pageable pageable = PageRequest.of(page -1 , limit);
+        Pageable pageable = PageRequest.of(page - 1, limit);
         result.setListResult(laptopService.findAll(pageable));
         result.setTotalPage((int) Math.ceil((double) (laptopService.totalItem()) / limit));
         return result;
+    }
+
+    @GetMapping("/laptop/listType")
+    public HashMap<String, String> listLaptopType() {
+        HashMap<String, String> listType = new HashMap<>();
+        for (LaptopType type : LaptopType.values()) {
+            listType.put(type.getName(), type.getDescription());
+        }
+        return listType;
+    }
+
+    @GetMapping("/laptop/listCpu")
+    public HashMap<String, String> listCpuLaptop() {
+        HashMap<String, String> listType = new HashMap<>();
+        CPU[] cpus = CPU.values();
+        for (int i = 0; i <= cpus.length - 1; i++) {
+            listType.put(cpus[i].getCpu(), cpus[i].getDescription());
+        }
+        return listType;
     }
 }

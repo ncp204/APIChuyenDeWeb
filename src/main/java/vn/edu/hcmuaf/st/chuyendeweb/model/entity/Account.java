@@ -48,7 +48,7 @@ public class Account extends BaseEntity {
     @Column
     private State state;
     @Column
-    private  String resetToken;
+    private String resetToken;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "account_role",
@@ -56,6 +56,6 @@ public class Account extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
     @JsonIgnore
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Cart cart;
 }

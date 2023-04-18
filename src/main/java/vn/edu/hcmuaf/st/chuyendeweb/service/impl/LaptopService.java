@@ -42,44 +42,58 @@ public class LaptopService implements ILaptopService {
     private final FilterListRepository filterListRepository;
     private final ImageLaptopRepository imageLaptopRepository;
 
+//    @Override
+//    public LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile[] files) {
+//        try {
+//            Laptop laptop = laptopConverter.toLaptop(laptopDTO);
+//            Optional<Facility> optionalFacility = facilityRepository.findById(laptopDTO.getFacilityId());
+//            if (optionalFacility.isEmpty()) {
+//                 throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Nhà kho không tồn tại hoặc đã xóa");
+//            }
+//
+//            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+//                    "cloud_name", "diyrrlmqk",
+//                    "api_key", "137284888978213",
+//                    "api_secret", "Rxu7XVXAxkeUXoEcwgt1s4dSpAs"));
+//            Map params;
+//            Map uploadResult;
+//            String linkImage;
+//
+//            ImageLaptop imageLaptop = new ImageLaptop();
+//            for (MultipartFile file : files) {
+//                String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+//                params = ObjectUtils.asMap(
+//                        "public_id", fileName
+//                );
+//                uploadResult = cloudinary.uploader().upload(file.getBytes(), params);
+//
+//                linkImage = (String) uploadResult.get("url");
+//                imageLaptop.setImageName(fileName);
+//                imageLaptop.setLinkImage(linkImage);
+//                imageLaptop.setLaptop(laptop);
+//                imageLaptopRepository.save(imageLaptop);
+//            }
+//
+//            laptop.setFacility(optionalFacility.get());
+//            laptop = laptopRepository.save(laptop);
+//            return laptopConverter.toLaptopDTO(laptop);
+//
+//        } catch (IOException e) {
+//            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi thêm hình ảnh, vui lòng thử lại");
+//        }
+//    }
+
     @Override
     public LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile[] files) {
-        try {
-            Laptop laptop = laptopConverter.toLaptop(laptopDTO);
-            Optional<Facility> optionalFacility = facilityRepository.findById(laptopDTO.getFacilityId());
-            if (optionalFacility.isEmpty()) {
-                throw new RuntimeException("Nhà kho không tồn tại hoặc đã xóa");
-            }
-
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                    "cloud_name", "diyrrlmqk",
-                    "api_key", "137284888978213",
-                    "api_secret", "Rxu7XVXAxkeUXoEcwgt1s4dSpAs"));
-            Map params;
-            Map uploadResult;
-            String linkImage;
-
-            ImageLaptop imageLaptop = new ImageLaptop();
-            for (MultipartFile file : files) {
-                String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
-                params = ObjectUtils.asMap(
-                        "public_id", fileName
-                );
-                uploadResult = cloudinary.uploader().upload(file.getBytes(), params);
-
-                linkImage = (String) uploadResult.get("url");
-                imageLaptop.setImageName(fileName);
-                imageLaptop.setLinkImage(linkImage);
-                imageLaptop.setLaptop(laptop);
-                imageLaptopRepository.save(imageLaptop);
-            }
-            
-            laptop = laptopRepository.save(laptop);
-            return laptopConverter.toLaptopDTO(laptop);
-
-        } catch (IOException e) {
-            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi thêm hình ảnh, vui lòng thử lại");
+        Laptop laptop = laptopConverter.toLaptop(laptopDTO);
+        Optional<Facility> optionalFacility = facilityRepository.findById(laptopDTO.getFacilityId());
+        if (optionalFacility.isEmpty()) {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Nhà kho không tồn tại hoặc đã xóa");
         }
+
+        laptop.setFacility(optionalFacility.get());
+        laptop = laptopRepository.save(laptop);
+        return laptopConverter.toLaptopDTO(laptop);
     }
 
     public LaptopDTO save(LaptopDTO laptopDTO) {

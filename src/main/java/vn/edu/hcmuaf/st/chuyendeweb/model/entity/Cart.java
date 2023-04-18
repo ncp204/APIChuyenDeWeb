@@ -17,18 +17,20 @@ import java.util.List;
 public class Cart extends BaseEntity {
     @Column
     private Date exportDate;
-    @Column
-    private double totalAmount;
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "cart_laptop",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "laptop_id")
-    )
-    private List<Laptop> laptops = new ArrayList<>();
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    private List<CartLaptop> cartLaptops;
+
+//    @JsonIgnore
+//    @ManyToMany
+//    @JoinTable(
+//            name = "cart_laptop",
+//            joinColumns = @JoinColumn(name = "cart_id"),
+//            inverseJoinColumns = @JoinColumn(name = "laptop_id")
+//    )
+//    private List<Laptop> laptops = new ArrayList<>();
 }

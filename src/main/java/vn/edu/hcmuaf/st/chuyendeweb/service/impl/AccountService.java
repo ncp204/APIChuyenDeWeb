@@ -85,7 +85,7 @@ public class AccountService implements IAccountService {
             dto.setRoles(new ArrayList<>());
         }
         if (dto.getState() == null) {
-            dto.setState(State.PENDING);
+            dto.setState(State.ACTIVE);
         }
         if (findByUserName(dto.getUserName().trim()).isPresent()) {
             throw new ServiceException(HttpStatus.FOUND, "Tên tài khoản đã tồn tại");
@@ -120,6 +120,7 @@ public class AccountService implements IAccountService {
         account = accountConverter.toAccount(dto);
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         account = accountRepository.save(account);
+        applicationContext.publishEvent(new AccountCreatedEvent(account));
         return accountConverter.toAccountDTO(account);
     }
 
