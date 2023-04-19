@@ -43,7 +43,7 @@ public class LaptopService implements ILaptopService {
     private final ImageLaptopRepository imageLaptopRepository;
 
 //    @Override
-//    public LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile[] files) {
+//    public LaptopDTO addLaptop(LaptopDTO laptopDTO,MultipartFile linkAvatar, MultipartFile[] imageFiles) {
 //        try {
 //            Laptop laptop = laptopConverter.toLaptop(laptopDTO);
 //            Optional<Facility> optionalFacility = facilityRepository.findById(laptopDTO.getFacilityId());
@@ -60,7 +60,7 @@ public class LaptopService implements ILaptopService {
 //            String linkImage;
 //
 //            ImageLaptop imageLaptop = new ImageLaptop();
-//            for (MultipartFile file : files) {
+//            for (MultipartFile file : imageFiles) {
 //                String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
 //                params = ObjectUtils.asMap(
 //                        "public_id", fileName
@@ -84,7 +84,7 @@ public class LaptopService implements ILaptopService {
 //    }
 
     @Override
-    public LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile[] files) {
+    public LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile linkAvatar, MultipartFile[] files) {
         Laptop laptop = laptopConverter.toLaptop(laptopDTO);
         Optional<Facility> optionalFacility = facilityRepository.findById(laptopDTO.getFacilityId());
         if (optionalFacility.isEmpty()) {

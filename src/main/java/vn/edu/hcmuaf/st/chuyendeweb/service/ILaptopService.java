@@ -10,7 +10,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import java.util.List;
 
 public interface ILaptopService {
-    LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile[] files);
+    LaptopDTO addLaptop(LaptopDTO laptopDTO,MultipartFile linkAvatar,  MultipartFile[] imageFiles);
 
     LaptopDTO save(LaptopDTO laptopDTO);
 

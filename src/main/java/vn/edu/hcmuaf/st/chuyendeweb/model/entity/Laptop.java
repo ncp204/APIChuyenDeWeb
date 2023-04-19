@@ -48,6 +48,8 @@ public class Laptop extends BaseEntity {
     private LaptopState laptopState;
     @Column
     private int quantity;
+    @Column
+    private String linkAvatar;
     @JsonIgnore
     @ManyToOne
     @NotNull

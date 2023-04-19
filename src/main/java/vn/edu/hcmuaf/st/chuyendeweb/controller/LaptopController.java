@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
 import vn.edu.hcmuaf.st.chuyendeweb.hash.Hashing;
@@ -18,6 +19,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.paging.output.LaptopOutput;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.LaptopService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -27,15 +29,16 @@ import java.util.*;
 public class LaptopController {
     private final LaptopService laptopService;
 
-//    @PostMapping("/laptop")
-//    public LaptopDTO addNewLaptop(@RequestParam("files") MultipartFile[] files, @RequestBody LaptopDTO laptopDTO) throws IOException {
-//        return laptopService.addLaptop(laptopDTO, files);
-//    }
+    @PostMapping("/laptop")
+    public LaptopDTO addNewLaptop(@RequestParam("linkAvatar") MultipartFile linkAvatar, @RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestBody LaptopDTO laptopDTO) throws IOException {
+        return laptopService.addLaptop(laptopDTO, linkAvatar, imageFiles);
+    }
 
     @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop( @RequestBody LaptopDTO laptopDTO) throws IOException {
+    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) throws IOException {
         MultipartFile[] files = new MultipartFile[2];
-        return laptopService.addLaptop(laptopDTO, files);
+        MultipartFile file = null;
+        return laptopService.addLaptop(laptopDTO, file, files);
     }
 
     @PutMapping("/laptop/{id}")
