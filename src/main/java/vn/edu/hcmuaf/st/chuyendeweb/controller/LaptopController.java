@@ -29,13 +29,13 @@ import java.util.*;
 public class LaptopController {
     private final LaptopService laptopService;
 
-    @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestParam("linkAvatar") MultipartFile linkAvatar, @RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestBody LaptopDTO laptopDTO) throws IOException {
-        return laptopService.addLaptop(laptopDTO, linkAvatar, imageFiles);
-    }
+//    @PostMapping("/laptop")
+//    public LaptopDTO addNewLaptop(@RequestParam("linkAvatar") MultipartFile linkAvatar, @RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestBody LaptopDTO laptopDTO) throws IOException {
+//        return laptopService.addLaptop(laptopDTO, linkAvatar, imageFiles);
+//    }
 
     @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) throws IOException {
+    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) {
         MultipartFile[] files = new MultipartFile[2];
         MultipartFile file = null;
         return laptopService.addLaptop(laptopDTO, file, files);
@@ -48,9 +48,22 @@ public class LaptopController {
     }
 
     @GetMapping("/laptop")
-    public List<Laptop> getLaptop(@RequestBody LaptopFilter filter, @RequestParam("start") int start, @RequestParam("limit") int limit) {
+    public LaptopOutput getLaptop(@RequestParam("start") int start,
+                                  @RequestParam("limit") int limit,
+                                  @RequestParam(value = "types", required = false) List<String> types,
+                                  @RequestParam(value = "brands", required = false) List<String> brands,
+                                  @RequestParam(value = "chipCpus", required = false) List<String> chipCpus) {
+        LaptopFilter filter = new LaptopFilter();
+        filter.setTypes(types != null && types.size() > 0 ? types : new ArrayList<>());
+        filter.setBrands(brands != null && brands.size() > 0 ? brands : new ArrayList<>());
+        filter.setChipCpus(chipCpus != null && chipCpus.size() > 0 ? chipCpus : new ArrayList<>());
+
         Page<Laptop> laptopPage = laptopService.getAllLaptop(filter, start, limit);
-        return laptopPage.getContent();
+        LaptopOutput output = new LaptopOutput();
+        output.setTotalPage(laptopPage.getTotalPages());
+        output.setPage(laptopPage.getNumber() + 1);
+        output.setLaptopList(laptopPage.getContent());
+        return output;
     }
 
     @GetMapping("/laptop/brand")

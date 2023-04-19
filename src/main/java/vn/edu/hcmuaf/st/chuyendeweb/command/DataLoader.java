@@ -9,8 +9,10 @@ import vn.edu.hcmuaf.st.chuyendeweb.evenlistener.AccountCreatedEvent;
 import vn.edu.hcmuaf.st.chuyendeweb.model.RoleType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Account;
+import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Facility;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Role;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.AccountRepository;
+import vn.edu.hcmuaf.st.chuyendeweb.repository.FacilityRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.RoleRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.RoleService;
 
@@ -24,16 +26,20 @@ public class DataLoader implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final RoleService roleService;
     private final AccountRepository accountRepository;
+    private final FacilityRepository facilityRepository;
     private final ApplicationContext applicationContext;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
-        if(!hashDataRole()) {
+        if (!hasDataRole()) {
             createDefaultRole();
         }
-        if(!hashDataAccount()) {
+        if (!hasDataAccount()) {
             createDefaultAccount();
+        }
+        if(!hasDataFacility()) {
+            createDefaultFacility();
         }
     }
 
@@ -72,11 +78,26 @@ public class DataLoader implements CommandLineRunner {
         applicationContext.publishEvent(new AccountCreatedEvent(admin));
     }
 
-    private boolean hashDataRole() {
+    public void createDefaultFacility() {
+        Facility fac1 = new Facility();
+        Facility fac2 = new Facility();
+
+        fac1.setFacilityName("Nhà kho 001");
+        fac1.setFacilityName("Nhà kho 001");
+
+        facilityRepository.save(fac1);
+        facilityRepository.save(fac2);
+    }
+
+    private boolean hasDataRole() {
         return !roleRepository.findAll().isEmpty();
     }
 
-    private boolean hashDataAccount() {
+    private boolean hasDataAccount() {
         return !accountRepository.findAll().isEmpty();
+    }
+
+    private boolean hasDataFacility() {
+        return !facilityRepository.findAll().isEmpty();
     }
 }
