@@ -6,11 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ResponMessenger;
 import vn.edu.hcmuaf.st.chuyendeweb.hash.Hashing;
 import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
 import vn.edu.hcmuaf.st.chuyendeweb.model.ImageModel;
@@ -72,8 +75,9 @@ public class LaptopController {
     }
 
     @DeleteMapping("/laptop")
-    public void deleteLaptop(@RequestBody long... ids) {
-
+    public ResponseEntity<?> deleteLaptop(@RequestBody Long... ids) {
+        laptopService.deleteLaptop(ids);
+        return new ResponseEntity<>(new ResponMessenger("Xóa laptop thành công"), HttpStatus.OK);
     }
 
     @GetMapping("/laptop/page")
