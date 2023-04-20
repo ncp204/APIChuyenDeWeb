@@ -58,7 +58,7 @@ public class AccountController {
     @PostMapping("/account/changePassword")
     public ResponseEntity<?> changePassword(@RequestParam String host, @RequestParam String username) {
         accountService.sendCodeToEmail(host, username);
-        return new ResponseEntity<>(new ResponMessenger("Đã gửi mã xác thực qua email của bạn, vui lòng kiểm tra emaail"), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponMessenger("Đã gửi mã xác thực qua email của bạn, vui lòng kiểm tra email"), HttpStatus.OK);
     }
 
     @PostMapping("/account/reset-password")

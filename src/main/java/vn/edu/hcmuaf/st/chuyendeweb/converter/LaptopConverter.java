@@ -43,6 +43,7 @@ public class LaptopConverter {
         dto.setModifiedBy(laptop.getModifiedBy());
         dto.setModifiedDate(laptop.getModifiedDate());
         dto.setType(laptop.getType());
+        dto.setLinkAvatar(laptop.getLinkAvatar());
         return dto;
     }
 
@@ -62,6 +63,7 @@ public class LaptopConverter {
         laptop.setQuantity(dto.getQuantity());
         laptop.setType(dto.getType());
         laptop.setChipCpu(dto.getChipCpu());
+        laptop.setLinkAvatar(dto.getLinkAvatar());
         return laptop;
     }
 }

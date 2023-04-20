@@ -8,6 +8,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopState;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,4 +41,6 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private int quantity;
     @NotBlank(message = "Loại laptop không được để trống")
     private String type;
+    @NotNull
+    private String linkAvatar;
 }

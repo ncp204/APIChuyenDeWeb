@@ -29,17 +29,17 @@ import java.util.*;
 public class LaptopController {
     private final LaptopService laptopService;
 
-//    @PostMapping("/laptop")
-//    public LaptopDTO addNewLaptop(@RequestParam("linkAvatar") MultipartFile linkAvatar, @RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestBody LaptopDTO laptopDTO) throws IOException {
-//        return laptopService.addLaptop(laptopDTO, linkAvatar, imageFiles);
-//    }
-
     @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) {
-        MultipartFile[] files = new MultipartFile[2];
-        MultipartFile file = null;
-        return laptopService.addLaptop(laptopDTO, file, files);
+    public LaptopDTO addNewLaptop(@RequestParam("linkAvatar") MultipartFile linkAvatar, @RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestBody LaptopDTO laptopDTO) throws IOException {
+        return laptopService.addLaptop(laptopDTO, linkAvatar, imageFiles);
     }
+
+//    @PostMapping("/laptop")
+//    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) {
+//        MultipartFile[] files = new MultipartFile[2];
+//        MultipartFile file = null;
+//        return laptopService.addLaptop(laptopDTO, file, files);
+//    }
 
     @PutMapping("/laptop/{id}")
     public LaptopDTO updateLaptop(@RequestBody LaptopDTO laptopDTO, @PathVariable("id") long id) {
