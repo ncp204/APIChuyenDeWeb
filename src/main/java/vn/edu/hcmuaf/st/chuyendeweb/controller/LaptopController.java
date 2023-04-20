@@ -30,8 +30,8 @@ public class LaptopController {
     private final LaptopService laptopService;
 
     @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestParam("linkAvatar") MultipartFile linkAvatar, @RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestBody LaptopDTO laptopDTO) throws IOException {
-        return laptopService.addLaptop(laptopDTO, linkAvatar, imageFiles);
+    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) {
+        return laptopService.addLaptop(laptopDTO, laptopDTO.getAvatarFile(), laptopDTO.getImageFiles());
     }
 
 //    @PostMapping("/laptop")

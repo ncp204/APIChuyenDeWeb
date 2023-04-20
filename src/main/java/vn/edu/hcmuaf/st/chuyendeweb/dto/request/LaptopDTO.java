@@ -3,6 +3,7 @@ package vn.edu.hcmuaf.st.chuyendeweb.dto.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
 import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopState;
 
@@ -43,4 +44,8 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String type;
     @NotNull
     private String linkAvatar;
+    @NotNull
+    private MultipartFile avatarFile;
+    @NotNull
+    private MultipartFile[] imageFiles;
 }
