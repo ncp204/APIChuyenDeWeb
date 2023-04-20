@@ -44,8 +44,4 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String type;
     @NotNull
     private String linkAvatar;
-    @NotNull
-    private MultipartFile avatarFile;
-    @NotNull
-    private MultipartFile[] imageFiles;
 }

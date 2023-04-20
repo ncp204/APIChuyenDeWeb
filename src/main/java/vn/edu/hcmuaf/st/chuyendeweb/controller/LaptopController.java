@@ -32,9 +32,11 @@ import java.util.*;
 public class LaptopController {
     private final LaptopService laptopService;
 
-    @PostMapping("/laptop")
-    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO) {
-        return laptopService.addLaptop(laptopDTO, laptopDTO.getAvatarFile(), laptopDTO.getImageFiles());
+    @PostMapping(value = "/laptop", consumes = "multipart/form-data")
+    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO,
+                                  @RequestParam("avatarFile") MultipartFile avatarFile,
+                                  @RequestParam("imageFiles") MultipartFile[] imageFiles) {
+        return laptopService.addLaptop(laptopDTO, avatarFile, imageFiles);
     }
 
 //    @PostMapping("/laptop")
