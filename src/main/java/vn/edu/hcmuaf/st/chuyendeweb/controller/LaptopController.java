@@ -1,5 +1,8 @@
 package vn.edu.hcmuaf.st.chuyendeweb.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,9 +36,12 @@ public class LaptopController {
     private final LaptopService laptopService;
 
     @PostMapping(value = "/laptop", consumes = "multipart/form-data")
-    public LaptopDTO addNewLaptop(@RequestBody LaptopDTO laptopDTO,
+    public LaptopDTO addNewLaptop(@RequestParam("laptopDTO")  String laptopDTOJson,
                                   @RequestParam("avatarFile") MultipartFile avatarFile,
-                                  @RequestParam("imageFiles") MultipartFile[] imageFiles) {
+                                  @RequestParam("imageFiles") MultipartFile[] imageFiles) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(laptopDTOJson);
+        LaptopDTO laptopDTO = objectMapper.treeToValue(rootNode, LaptopDTO.class);
         return laptopService.addLaptop(laptopDTO, avatarFile, imageFiles);
     }
 
