@@ -170,6 +170,21 @@ public class LaptopService implements ILaptopService {
         return (int) laptopRepository.count();
     }
 
+    @Override
+    public List<String> getImageLinks(Long id) {
+        Optional<Laptop> laptopOptional = laptopRepository.findById(id);
+        if (laptopOptional.isPresent()) {
+            List<String> links = new ArrayList<>();
+            List<ImageLaptop> imageLaptops = laptopOptional.get().getImages();
+            for (ImageLaptop il : imageLaptops) {
+                links.add(il.getLinkImage());
+            }
+            return links;
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy laptop");
+        }
+    }
+
     private String getLink(MultipartFile file) throws IOException {
         Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "diyrrlmqk",

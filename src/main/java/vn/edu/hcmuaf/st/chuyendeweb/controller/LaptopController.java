@@ -108,4 +108,12 @@ public class LaptopController {
         }
         return listType;
     }
+
+    @GetMapping("/laptop/images/{id}")
+    public List<String> getImageLinks(@PathVariable("id") Long id) {
+        List<String> links = new ArrayList<>();
+        links.addAll(laptopService.getImageLinks(id));
+        return links;
+    }
+
 }

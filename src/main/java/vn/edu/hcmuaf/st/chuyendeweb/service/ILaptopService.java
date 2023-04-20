@@ -25,4 +25,6 @@ public interface ILaptopService {
     List<LaptopDTO> findAll(Pageable pageable);
 
     int totalItem();
+
+    List<String> getImageLinks(Long id);
 }
