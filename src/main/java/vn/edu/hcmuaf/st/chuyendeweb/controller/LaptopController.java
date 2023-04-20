@@ -44,7 +44,7 @@ public class LaptopController {
     @PutMapping("/laptop/{id}")
     public LaptopDTO updateLaptop(@RequestBody LaptopDTO laptopDTO, @PathVariable("id") long id) {
         laptopDTO.setId(id);
-        return laptopService.save(laptopDTO);
+        return laptopService.updateLaptop(laptopDTO);
     }
 
     @GetMapping("/laptop")

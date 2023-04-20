@@ -42,7 +42,7 @@ public class LaptopService implements ILaptopService {
     private final FilterListRepository filterListRepository;
     private final ImageLaptopRepository imageLaptopRepository;
 
-        @Override
+    @Override
     public LaptopDTO addLaptop(LaptopDTO laptopDTO, MultipartFile linkAvatar, MultipartFile[] imageFiles) {
         try {
             // Lưu ảnh avatar laptop vào cloud
@@ -67,6 +67,38 @@ public class LaptopService implements ILaptopService {
 
         } catch (IOException e) {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi thêm hình ảnh, vui lòng thử lại");
+        }
+    }
+
+    @Override
+    public LaptopDTO updateLaptop(LaptopDTO laptopDTO) {
+        Long id = laptopDTO.getId();
+        if (id != null) {
+            Optional<Laptop> laptopOptional = laptopRepository.findById(id);
+            if (laptopOptional.isPresent()) {
+                Laptop oldLaptop = laptopOptional.get();
+                Laptop laptop = laptopConverter.toLaptop(laptopDTO, oldLaptop);
+                laptop = laptopRepository.save(laptop);
+                return laptopConverter.toLaptopDTO(laptop);
+            } else {
+                throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy laptop hoặc laptop đã bị xóa");
+            }
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Chưa có id laptop hoặc laptop đã bị xóa");
+        }
+    }
+
+    @Override
+    public void deleteLaptop(Long... ids) {
+        if (ids != null && ids.length > 0) {
+            for (Long id : ids) {
+                Optional<Laptop> laptopOptional = laptopRepository.findById(id);
+                if (laptopOptional.isPresent()) {
+                    laptopRepository.delete(laptopOptional.get());
+                }
+            }
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Chưa có id laptop");
         }
     }
 

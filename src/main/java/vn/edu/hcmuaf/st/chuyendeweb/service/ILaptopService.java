@@ -12,6 +12,10 @@ import java.util.List;
 public interface ILaptopService {
     LaptopDTO addLaptop(LaptopDTO laptopDTO,MultipartFile linkAvatar,  MultipartFile[] imageFiles);
 
+    LaptopDTO updateLaptop(LaptopDTO laptopDTO);
+
+    void deleteLaptop(Long... ids);
+
     LaptopDTO save(LaptopDTO laptopDTO);
 
     Page<Laptop> getAllLaptop(LaptopFilter filter, int start, int limit);
