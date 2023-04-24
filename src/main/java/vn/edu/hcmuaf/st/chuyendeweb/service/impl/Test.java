@@ -2,6 +2,9 @@ package vn.edu.hcmuaf.st.chuyendeweb.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,24 +14,12 @@ import java.util.Map;
 public class Test {
 
     public static void main(String[] args) {
-        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "diyrrlmqk",
-                "api_key", "137284888978213",
-                "api_secret", "Rxu7XVXAxkeUXoEcwgt1s4dSpAs"));
-
-        try {
-            for(int i=10; i <= 100; i++) {
-                File file = new File("C:\\Users\\giodo\\OneDrive\\Máy tính\\gravity falls.jpg");
-                String fileName = file.getName().substring(0, file.getName().lastIndexOf("."));
-                Map params = ObjectUtils.asMap(
-                        "public_id", fileName+" "+i
-                );
-                Map uploadResult = cloudinary.uploader().upload(file, params);
-                String linkImage = (String) uploadResult.get("url");
-                System.out.println("\r\n"+linkImage +" hahahahaha");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Tạo đối tượng Gson
+        Gson gson = new Gson();
+        String jsonString = "{\"battery\":\"Thinkpad x1 carbon gen 10\",\"brand\":\"Thinkpad x1 carbon gen 10\",\"chipCpu\":\"Thinkpad x1 carbon gen 10\",\"color\":\"Thinkpad x1 carbon gen 10\",\"cpu\":\"Thinkpad x1 carbon gen 10\",\"display\":\"Thinkpad x1 carbon gen 10\",\"graphics\":\"Thinkpad x1 carbon gen 10\",\"laptopState\":\"Thinkpad x1 carbon gen 10\",\"price\":\"100\",\"productName\":\"Thinkpad x1 carbon gen 10\",\"quantity\":\"10\",\"ram\":\"Thinkpad x1 carbon gen 10\",\"storage\":\"Thinkpad x1 carbon gen 10\",\"type\":\"Thinkpad x1 carbon gen 10\",\"weight\":\"12\"}";
+        // Chuyển đổi chuỗi thành đối tượng JSON
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+        LaptopDTO laptopDTO = gson.fromJson(jsonObject, LaptopDTO.class);
+        System.out.println(laptopDTO);
     }
 }

@@ -58,6 +58,7 @@ public class LaptopService implements ILaptopService {
             for (MultipartFile file : imageFiles) {
                 imageLaptop.setLinkImage(getLink(file));
                 imageLaptop.setLaptop(laptop);
+                laptop.getImages().add(imageLaptop);
                 imageLaptopRepository.save(imageLaptop);
             }
 

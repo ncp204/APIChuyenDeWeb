@@ -3,6 +3,8 @@ package vn.edu.hcmuaf.st.chuyendeweb.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,9 +41,12 @@ public class LaptopController {
     public LaptopDTO addNewLaptop(@RequestParam("laptopDTO")  String laptopDTOJson,
                                   @RequestParam("avatarFile") MultipartFile avatarFile,
                                   @RequestParam("imageFiles") MultipartFile[] imageFiles) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(laptopDTOJson);
-        LaptopDTO laptopDTO = objectMapper.treeToValue(rootNode, LaptopDTO.class);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        LaptopDTO laptopDTO = objectMapper.readValue(laptopDTOJson, LaptopDTO.class);
+
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(laptopDTOJson, JsonObject.class);
+        LaptopDTO laptopDTO = gson.fromJson(jsonObject, LaptopDTO.class);
         return laptopService.addLaptop(laptopDTO, avatarFile, imageFiles);
     }
 
