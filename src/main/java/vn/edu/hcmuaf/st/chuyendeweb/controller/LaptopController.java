@@ -38,7 +38,7 @@ public class LaptopController {
     private final LaptopService laptopService;
 
     @PostMapping(value = "/laptop", consumes = "multipart/form-data")
-    public LaptopDTO addNewLaptop(@RequestParam("laptopDTO")  String laptopDTOJson,
+    public LaptopDTO addNewLaptop(@RequestParam("laptopDTO") String laptopDTOJson,
                                   @RequestParam("avatarFile") MultipartFile avatarFile,
                                   @RequestParam("imageFiles") MultipartFile[] imageFiles) throws JsonProcessingException {
 //        ObjectMapper objectMapper = new ObjectMapper();
@@ -57,7 +57,7 @@ public class LaptopController {
 //        return laptopService.addLaptop(laptopDTO, file, files);
 //    }
 
-    @PutMapping("/laptop/{id}")
+    @PutMapping("/laptop/update/{id}")
     public LaptopDTO updateLaptop(@RequestBody LaptopDTO laptopDTO, @PathVariable("id") long id) {
         laptopDTO.setId(id);
         return laptopService.updateLaptop(laptopDTO);
@@ -66,13 +66,15 @@ public class LaptopController {
     @GetMapping("/laptop")
     public LaptopOutput getLaptop(@RequestParam("start") int start,
                                   @RequestParam("limit") int limit,
-                                  @RequestParam(value = "types", required = false) List<String> types,
-                                  @RequestParam(value = "brands", required = false) List<String> brands,
-                                  @RequestParam(value = "chipCpus", required = false) List<String> chipCpus) {
-        LaptopFilter filter = new LaptopFilter();
-        filter.setTypes(types != null && types.size() > 0 ? types : new ArrayList<>());
-        filter.setBrands(brands != null && brands.size() > 0 ? brands : new ArrayList<>());
-        filter.setChipCpus(chipCpus != null && chipCpus.size() > 0 ? chipCpus : new ArrayList<>());
+                                  @RequestParam(value = "types", required = false) String typeJson,
+                                  @RequestParam(value = "brands", required = false) String brandJson,
+                                  @RequestParam(value = "chipCpus", required = false) String chipCpuJson) {
+
+
+//        LaptopFilter filter = new LaptopFilter();
+//        filter.setTypes(types != null && types.size() > 0 ? types : new ArrayList<>());
+//        filter.setBrands(brands != null && brands.size() > 0 ? brands : new ArrayList<>());
+//        filter.setChipCpus(chipCpus != null && chipCpus.size() > 0 ? chipCpus : new ArrayList<>());
 
         Page<Laptop> laptopPage = laptopService.getAllLaptop(filter, start, limit);
         LaptopOutput output = new LaptopOutput();
@@ -82,9 +84,24 @@ public class LaptopController {
         return output;
     }
 
+    @GetMapping("/laptop/{id}")
+    public LaptopDTO getLaptop(@PathVariable("id") Long id) {
+        return laptopService.findLaptopById(id);
+    }
+
     @GetMapping("/laptop/brand")
     public List<String> getAllBrand() {
         return laptopService.getAllBrand();
+    }
+
+    @GetMapping("/laptop/type")
+    public List<String> getAllType() {
+        return laptopService.getAllType();
+    }
+
+    @GetMapping("/laptop/chipCpu")
+    public List<String> getAllChipCpu() {
+        return laptopService.getAllChipCpu();
     }
 
     @DeleteMapping("/laptop")

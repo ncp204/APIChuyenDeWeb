@@ -8,6 +8,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ILaptopService {
     LaptopDTO addLaptop(LaptopDTO laptopDTO,MultipartFile linkAvatar,  MultipartFile[] imageFiles);
@@ -22,7 +23,13 @@ public interface ILaptopService {
 
     List<String> getAllBrand();
 
+    List<String> getAllType();
+
+    List<String> getAllChipCpu();
+
     List<LaptopDTO> findAll(Pageable pageable);
+
+    LaptopDTO findLaptopById(Long id);
 
     int totalItem();
 

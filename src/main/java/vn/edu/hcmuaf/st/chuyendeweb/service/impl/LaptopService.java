@@ -157,6 +157,16 @@ public class LaptopService implements ILaptopService {
     }
 
     @Override
+    public List<String> getAllType() {
+        return laptopRepository.findAllType();
+    }
+
+    @Override
+    public List<String> getAllChipCpu() {
+        return laptopRepository.findAllChipCpu();
+    }
+
+    @Override
     public List<LaptopDTO> findAll(Pageable pageable) {
         List<LaptopDTO> result = new ArrayList<>();
         List<Laptop> entities = laptopRepository.findAll(pageable).getContent();
@@ -164,6 +174,16 @@ public class LaptopService implements ILaptopService {
             result.add(laptopConverter.toLaptopDTO(laptop));
         }
         return result;
+    }
+
+    @Override
+    public LaptopDTO findLaptopById(Long id) {
+        Optional<Laptop> laptopOptional = laptopRepository.findById(id);
+        if (laptopOptional.isPresent()) {
+            return laptopConverter.toLaptopDTO(laptopOptional.get());
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy laptop hoặc đã bị xóa");
+        }
     }
 
     @Override

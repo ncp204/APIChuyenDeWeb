@@ -7,16 +7,24 @@ import vn.edu.hcmuaf.st.chuyendeweb.model.entity.CartLaptop;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LaptopRepository extends JpaRepository<Laptop, Long> {
 
     @Query("SELECT lt FROM Laptop lt WHERE (:types is null OR lt.type IN :types) AND (:brands is null OR lt.brand IN :brands) AND (:cpus is null OR lt.cpu IN :cpus)")
     List<Laptop> findByFilter(@Param("types") List<String> types, @Param("brands") List<String> brands, @Param("cpus") List<String> cpus);
 
-
     @Query("Select distinct l.brand from Laptop l")
     List<String> findAllBrand();
 
+    @Query("Select distinct l.type from Laptop l")
+    List<String> findAllType();
+
+    @Query("Select distinct l.chipCpu from Laptop l")
+    List<String> findAllChipCpu();
+
     @Query("SELECT c.cartLaptops FROM Cart c WHERE c.account.userName = :username")
     List<CartLaptop> findLaptopsByUser(@Param("username") String username);
+
+    Optional<Laptop> findLaptopsById(Long id);
 }
