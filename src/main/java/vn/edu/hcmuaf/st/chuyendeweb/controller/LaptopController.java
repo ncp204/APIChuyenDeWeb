@@ -26,6 +26,7 @@ import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.paging.output.LaptopOutput;
 import vn.edu.hcmuaf.st.chuyendeweb.service.impl.LaptopService;
+import vn.edu.hcmuaf.st.chuyendeweb.utils.JsonUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,12 +42,7 @@ public class LaptopController {
     public LaptopDTO addNewLaptop(@RequestParam("laptopDTO") String laptopDTOJson,
                                   @RequestParam("avatarFile") MultipartFile avatarFile,
                                   @RequestParam("imageFiles") MultipartFile[] imageFiles) throws JsonProcessingException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        LaptopDTO laptopDTO = objectMapper.readValue(laptopDTOJson, LaptopDTO.class);
-
-        Gson gson = new Gson();
-        JsonObject jsonObject = gson.fromJson(laptopDTOJson, JsonObject.class);
-        LaptopDTO laptopDTO = gson.fromJson(jsonObject, LaptopDTO.class);
+        LaptopDTO laptopDTO = JsonUtils.jsonToLaptopDTO(laptopDTOJson);
         return laptopService.addLaptop(laptopDTO, avatarFile, imageFiles);
     }
 
@@ -70,11 +66,11 @@ public class LaptopController {
                                   @RequestParam(value = "brands", required = false) String brandJson,
                                   @RequestParam(value = "chipCpus", required = false) String chipCpuJson) {
 
+        List<String> types = JsonUtils.jsonToListString(typeJson);
+        List<String> brands = JsonUtils.jsonToListString(brandJson);
+        List<String> chipCpus = JsonUtils.jsonToListString(chipCpuJson);
 
-//        LaptopFilter filter = new LaptopFilter();
-//        filter.setTypes(types != null && types.size() > 0 ? types : new ArrayList<>());
-//        filter.setBrands(brands != null && brands.size() > 0 ? brands : new ArrayList<>());
-//        filter.setChipCpus(chipCpus != null && chipCpus.size() > 0 ? chipCpus : new ArrayList<>());
+        LaptopFilter filter = new LaptopFilter(types, brands, chipCpus);
 
         Page<Laptop> laptopPage = laptopService.getAllLaptop(filter, start, limit);
         LaptopOutput output = new LaptopOutput();

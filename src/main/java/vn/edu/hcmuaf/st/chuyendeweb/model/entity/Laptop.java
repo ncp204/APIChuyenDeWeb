@@ -56,7 +56,7 @@ public class Laptop extends BaseEntity {
     @JoinColumn(name = "faility_id")
     private Facility facility;
     @JsonIgnore
-    @OneToMany(mappedBy = "laptop")
+    @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
     private List<ImageLaptop> images = new ArrayList<>();
 //    @JsonIgnore
 //    @ManyToMany(mappedBy = "laptops")

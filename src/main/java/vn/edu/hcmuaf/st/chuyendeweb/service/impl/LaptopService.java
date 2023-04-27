@@ -54,12 +54,13 @@ public class LaptopService implements ILaptopService {
                 throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Nhà kho không tồn tại hoặc đã xóa");
             }
 
-            ImageLaptop imageLaptop = new ImageLaptop();
+            ImageLaptop imageLaptop;
             for (MultipartFile file : imageFiles) {
+                imageLaptop = new ImageLaptop();
                 imageLaptop.setLinkImage(getLink(file));
                 imageLaptop.setLaptop(laptop);
                 laptop.getImages().add(imageLaptop);
-                imageLaptopRepository.save(imageLaptop);
+//                imageLaptopRepository.save(imageLaptop);
             }
 
             laptop.setFacility(optionalFacility.get());
