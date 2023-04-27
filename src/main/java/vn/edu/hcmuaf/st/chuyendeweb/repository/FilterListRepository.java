@@ -35,7 +35,7 @@ public class FilterListRepository {
             predicates.add(root.get("brand").in(brands));
         }
         if (!chipCpus.isEmpty()) {
-            predicates.add(root.get("cpu").in(chipCpus));
+            predicates.add(root.get("chipCpu").in(chipCpus));
         }
         if (!predicates.isEmpty()) {
             criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));

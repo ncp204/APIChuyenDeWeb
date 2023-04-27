@@ -13,8 +13,6 @@ import vn.edu.hcmuaf.st.chuyendeweb.converter.LaptopConverter;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.ServiceException;
-import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
-import vn.edu.hcmuaf.st.chuyendeweb.model.ImageModel;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Facility;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.ImageLaptop;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;

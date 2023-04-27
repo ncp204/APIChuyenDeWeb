@@ -19,7 +19,7 @@ public class JsonUtils {
         }.getType();
         try {
             List<String> result = gson.fromJson(jsonString, type);
-            return result;
+            return result != null ? result: new ArrayList<>();
         } catch (Exception e) {
             return new ArrayList<>();
         }

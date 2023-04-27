@@ -65,10 +65,9 @@ public class LaptopController {
                                   @RequestParam(value = "types", required = false) String typeJson,
                                   @RequestParam(value = "brands", required = false) String brandJson,
                                   @RequestParam(value = "chipCpus", required = false) String chipCpuJson) {
-
-        List<String> types = JsonUtils.jsonToListString(typeJson);
-        List<String> brands = JsonUtils.jsonToListString(brandJson);
-        List<String> chipCpus = JsonUtils.jsonToListString(chipCpuJson);
+        List<String> types = typeJson != null && typeJson.length() > 0 ? List.of(  typeJson.split(",")) : new ArrayList<>() ;
+        List<String> brands =  brandJson != null && brandJson.length() > 0 ? List.of(  brandJson.split(",")) : new ArrayList<>();
+        List<String> chipCpus =  chipCpuJson != null && chipCpuJson.length() > 0 ? List.of(  chipCpuJson.split(",")) : new ArrayList<>();
 
         LaptopFilter filter = new LaptopFilter(types, brands, chipCpus);
 
