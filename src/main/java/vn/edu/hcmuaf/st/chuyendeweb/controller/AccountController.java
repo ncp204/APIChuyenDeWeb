@@ -40,9 +40,9 @@ public class AccountController {
         return accountService.findAllAccount();
     }
 
-    @GetMapping("/account/{id}")
-    public Account getAccount(@RequestBody @PathVariable("id") Long id) {
-        return accountService.findById(id).get();
+    @GetMapping("/account/detail")
+    public Account getAccount(@RequestParam("token") String token) {
+        return accountService.findByUserName(token).get();
     }
 
     @PutMapping("/account/state/{id}")

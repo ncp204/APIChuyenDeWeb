@@ -87,7 +87,7 @@ public class AccountService implements IAccountService {
         if (dto.getState() == null) {
             dto.setState(State.ACTIVE);
         }
-        if (findByUserName(dto.getUserName().trim()).isPresent()) {
+        if (accountRepository.findByUserName(dto.getUserName().trim()).isPresent()) {
             throw new ServiceException(HttpStatus.FOUND, "Tên tài khoản đã tồn tại");
         }
         if (findByEmail(dto.getEmail().trim()).isPresent()) {
@@ -173,8 +173,14 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public Optional<Account> findByUserName(String username) {
-        return accountRepository.findByUserName(username);
+    public Optional<Account> findByUserName(String token) {
+        String username = jwtTokenProvider.getUserNameFromToken(token.trim());
+        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
+        if(optionalAccount.isPresent()) {
+           return optionalAccount;
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại, vui lòng thử lại");
+        }
     }
 
     @Override
@@ -231,7 +237,7 @@ public class AccountService implements IAccountService {
     }
 
     private void validateAccount(String username) {
-        Optional<Account> optionalAccount = findByUserName(username);
+        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
         if (optionalAccount.isEmpty()) {
             throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy tài khoản");
         }
