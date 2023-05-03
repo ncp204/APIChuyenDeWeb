@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class ImageLaptop extends BaseEntity {
+    String imageName;
     @Column
     String linkImage;
     @JsonIgnore

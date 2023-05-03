@@ -18,10 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ImageModel;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ResponMessenger;
-import vn.edu.hcmuaf.st.chuyendeweb.hash.Hashing;
 import vn.edu.hcmuaf.st.chuyendeweb.model.CPU;
-import vn.edu.hcmuaf.st.chuyendeweb.model.ImageModel;
 import vn.edu.hcmuaf.st.chuyendeweb.model.LaptopType;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 import vn.edu.hcmuaf.st.chuyendeweb.paging.output.LaptopOutput;
@@ -135,10 +134,8 @@ public class LaptopController {
     }
 
     @GetMapping("/laptop/images/{id}")
-    public List<String> getImageLinks(@PathVariable("id") Long id) {
-        List<String> links = new ArrayList<>();
-        links.addAll(laptopService.getImageLinks(id));
-        return links;
+    public List<ImageModel> getImageLinks(@PathVariable("id") Long id) {
+        return laptopService.getImageLinks(id);
     }
 
 }

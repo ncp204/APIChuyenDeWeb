@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ImageModel;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 
 import java.util.List;
@@ -33,5 +34,5 @@ public interface ILaptopService {
 
     int totalItem();
 
-    List<String> getImageLinks(Long id);
+    List<ImageModel> getImageLinks(Long id);
 }

@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.st.chuyendeweb.converter.LaptopConverter;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.dto.request.LaptopFilter;
+import vn.edu.hcmuaf.st.chuyendeweb.dto.response.ImageModel;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.ServiceException;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Facility;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.ImageLaptop;
@@ -53,12 +54,14 @@ public class LaptopService implements ILaptopService {
             }
 
             ImageLaptop imageLaptop;
+            String fileName;
             for (MultipartFile file : imageFiles) {
                 imageLaptop = new ImageLaptop();
+                fileName = file.getOriginalFilename();
+                imageLaptop.setImageName(fileName);
                 imageLaptop.setLinkImage(getLink(file));
                 imageLaptop.setLaptop(laptop);
                 laptop.getImages().add(imageLaptop);
-//                imageLaptopRepository.save(imageLaptop);
             }
 
             laptop.setFacility(optionalFacility.get());
@@ -191,15 +194,21 @@ public class LaptopService implements ILaptopService {
     }
 
     @Override
-    public List<String> getImageLinks(Long id) {
+    public List<ImageModel> getImageLinks(Long id) {
         Optional<Laptop> laptopOptional = laptopRepository.findById(id);
         if (laptopOptional.isPresent()) {
-            List<String> links = new ArrayList<>();
+            List<ImageModel> imageModels = new ArrayList<>();
             List<ImageLaptop> imageLaptops = laptopOptional.get().getImages();
+
+            ImageModel imageModel;
             for (ImageLaptop il : imageLaptops) {
-                links.add(il.getLinkImage());
+                imageModel = new ImageModel();
+                imageModel.setId(il.getId());
+                imageModel.setImageName(il.getImageName());
+                imageModel.setImageLink(il.getLinkImage());
+                imageModels.add(imageModel);
             }
-            return links;
+            return imageModels;
         } else {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy laptop");
         }
