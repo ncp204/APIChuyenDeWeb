@@ -125,15 +125,18 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public AccountDTO update(AccountDTO dto) {
+    public AccountDTO update(AccountDTO dto, String token) {
         Account account;
-        Optional<Account> optionalAccount = accountRepository.findById(dto.getId());
+        String username = jwtTokenProvider.getUserNameFromToken(token.trim());
+        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
         if (!optionalAccount.isPresent()) {
-            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản với id: " + dto.getId());
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản: " + username);
         }
         Account oldAccount = optionalAccount.get();
         account = accountConverter.toAccount(dto, oldAccount);
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
+        if (account.getPassword() != null) {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
         accountRepository.save(account);
         return accountConverter.toAccountDTO(account);
     }
@@ -176,8 +179,8 @@ public class AccountService implements IAccountService {
     public Optional<Account> findByUserName(String token) {
         String username = jwtTokenProvider.getUserNameFromToken(token.trim());
         Optional<Account> optionalAccount = accountRepository.findByUserName(username);
-        if(optionalAccount.isPresent()) {
-           return optionalAccount;
+        if (optionalAccount.isPresent()) {
+            return optionalAccount;
         } else {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại, vui lòng thử lại");
         }
@@ -200,7 +203,7 @@ public class AccountService implements IAccountService {
     @Override
     public void sendCodeToEmail(String host, String username) {
         Optional<Account> accountOptional = accountRepository.findByUserName(username.trim());
-        if(accountOptional.isEmpty()) {
+        if (accountOptional.isEmpty()) {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại");
         }
         Account account = accountOptional.get();

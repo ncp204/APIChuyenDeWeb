@@ -29,10 +29,9 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/account/update/{id}")
-    public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable("id") long id) {
-        accountDTO.setId(id);
-        return accountService.update(accountDTO);
+    @PutMapping("/account/update")
+    public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @RequestParam("token") String token) {
+        return accountService.update(accountDTO, token);
     }
 
     @GetMapping("/account/list")
