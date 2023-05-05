@@ -134,7 +134,7 @@ public class AccountService implements IAccountService {
         }
         Account oldAccount = optionalAccount.get();
         account = accountConverter.toAccount(dto, oldAccount);
-        if (account.getPassword() != null) {
+        if (dto.getPassword() != null) {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
         }
         accountRepository.save(account);

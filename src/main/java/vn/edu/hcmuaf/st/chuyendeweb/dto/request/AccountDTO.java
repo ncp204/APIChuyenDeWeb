@@ -6,6 +6,7 @@ import lombok.Setter;
 import vn.edu.hcmuaf.st.chuyendeweb.model.State;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Role;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -16,6 +17,7 @@ public class AccountDTO extends AbstractDTO<AccountDTO>{
     private String password;
     private String fullName;
     private String phone;
+    private Date dob;
     private String email;
     private String sex;
     private String address;

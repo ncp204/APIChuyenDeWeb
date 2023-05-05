@@ -19,6 +19,7 @@ public class AccountConverter {
                 .password(account.getPassword())
                 .fullName(account.getFullName())
                 .phone(account.getPhone())
+                .dob(account.getDob())
                 .email(account.getEmail())
                 .sex(account.getSex())
                 .address(account.getAddress())
@@ -43,6 +44,9 @@ public class AccountConverter {
         }
         if (dto.getPhone() != null && dto.getPhone().trim().length() > 0) {
             account.setPhone(dto.getPhone());
+        }
+        if (dto.getDob() != null) {
+            account.setDob(dto.getDob());
         }
         if (dto.getEmail() != null && dto.getEmail().trim().length() > 0) {
             account.setEmail(dto.getEmail());
