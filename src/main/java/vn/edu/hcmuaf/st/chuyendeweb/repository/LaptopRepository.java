@@ -3,7 +3,6 @@ package vn.edu.hcmuaf.st.chuyendeweb.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import vn.edu.hcmuaf.st.chuyendeweb.model.entity.CartLaptop;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.Laptop;
 
 import java.util.List;
@@ -22,9 +21,6 @@ public interface LaptopRepository extends JpaRepository<Laptop, Long> {
 
     @Query("Select distinct l.chipCpu from Laptop l")
     List<String> findAllChipCpu();
-
-    @Query("SELECT c.cartLaptops FROM Cart c WHERE c.account.userName = :username")
-    List<CartLaptop> findLaptopsByUser(@Param("username") String username);
 
     Optional<Laptop> findLaptopsById(Long id);
 }

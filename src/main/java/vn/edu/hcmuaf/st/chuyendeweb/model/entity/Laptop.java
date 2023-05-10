@@ -58,10 +58,10 @@ public class Laptop extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
     private List<ImageLaptop> images = new ArrayList<>();
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "laptops")
-//    private List<Cart> carts = new ArrayList<>();
     @JsonIgnore
-    @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
-    private List<CartLaptop> cartLaptops;
+    @ManyToMany(mappedBy = "cartLaptop")
+    private List<Cart> carts = new ArrayList<>();
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
+//    private List<CartLaptop> cartLaptops;
 }

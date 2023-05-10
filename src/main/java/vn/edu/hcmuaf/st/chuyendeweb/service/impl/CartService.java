@@ -10,16 +10,12 @@ import vn.edu.hcmuaf.st.chuyendeweb.dto.request.TokenAndIdsDTO;
 import vn.edu.hcmuaf.st.chuyendeweb.exception.ServiceException;
 import vn.edu.hcmuaf.st.chuyendeweb.model.entity.*;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.AccountRepository;
-import vn.edu.hcmuaf.st.chuyendeweb.repository.CartLaptopRepository;
-import vn.edu.hcmuaf.st.chuyendeweb.repository.CartRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.repository.LaptopRepository;
 import vn.edu.hcmuaf.st.chuyendeweb.security.jwt.JwtTokenProvider;
 import vn.edu.hcmuaf.st.chuyendeweb.service.ICartService;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +24,6 @@ public class CartService implements ICartService {
     private final JwtTokenProvider jwtTokenProvider;
     private final LaptopConverter laptopConverter;
     private final AccountRepository accountRepository;
-    private final CartRepository cartRepository;
-    private final CartLaptopRepository cartLaptopRepository;
 
     @Override
     public CartDTO findLaptopByUser(String token) {
@@ -39,15 +33,13 @@ public class CartService implements ICartService {
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
             Cart cart = account.getCart();
-            List<CartLaptop> cartLaptopList = cart.getCartLaptops();
+            Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
             List<LaptopDTO> dtoList = cartDTO.getLaptopDTOs();
 
-            Laptop laptop;
             LaptopDTO laptopDTO;
-            if (!cartLaptopList.isEmpty()) {
-                for (CartLaptop cartLaptop : cartLaptopList) {
-                    laptop = cartLaptop.getLaptop();
-                    laptop.setQuantity(cartLaptop.getQuantity());
+            if (!cartLaptop.isEmpty()) {
+                List<Laptop> laptopList = new ArrayList<>(cartLaptop.keySet());
+                for (Laptop laptop : laptopList) {
                     laptopDTO = laptopConverter.toLaptopDTO(laptop);
                     laptopDTO.setTotalAmout(laptopDTO.getPrice() * laptopDTO.getQuantity());
                     dtoList.add(laptopDTO);
@@ -60,6 +52,7 @@ public class CartService implements ICartService {
     }
 
     @Override
+    @Transactional
     public void addLaptopToCart(String token, Long laptopId, Integer quantity) {
         String username = jwtTokenProvider.getUserNameFromToken(token);
         Optional<Account> accountOptional = accountRepository.findByUserName(username);
@@ -77,26 +70,13 @@ public class CartService implements ICartService {
         Account account = accountOptional.get();
         Laptop laptop = laptopOptional.get();
         Cart cart = account.getCart();
-        List<CartLaptop> cartLaptops = cart.getCartLaptops();
-        CartLaptop cartLaptop = null;
 
-        for (CartLaptop cl : cartLaptops) {
-            if (cl.getLaptop().getId().equals(laptopId)) {
-                cartLaptop = cl;
-                break;
-            }
-        }
-
-        if (cartLaptop == null) {
-            cartLaptop = new CartLaptop();
-            cartLaptop.setCart(cart);
-            cartLaptop.setLaptop(laptop);
-            cartLaptop.setQuantity(quantity);
-            laptop.getCartLaptops().add(cartLaptop);
+        Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
+        if (cartLaptop.containsKey(laptop)) {
+            cartLaptop.put(laptop, quantity + cartLaptop.get(laptop));
         } else {
-            cartLaptop.setQuantity(cartLaptop.getQuantity() + quantity);
+            cartLaptop.put(laptop, quantity);
         }
-
         accountRepository.save(account);
     }
 
@@ -110,15 +90,15 @@ public class CartService implements ICartService {
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
             Cart cart = account.getCart();
-            List<CartLaptop> cartLaptops = cart.getCartLaptops();
-            Optional<CartLaptop> cartLaptopOptional;
+            Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
+
+            Optional<Laptop> optionalLaptop;
+            Laptop laptop;
             for (Long id : ids) {
-                cartLaptopOptional = cartLaptops.stream().filter(cartLaptop ->
-                        cartLaptop.getLaptop().getId().equals(id)).findFirst();
-                if (cartLaptopOptional.isPresent()) {
-                    CartLaptop cartLaptop = cartLaptopOptional.get();
-                    cartLaptops.remove(cartLaptop);
-                    cartLaptopRepository.delete(cartLaptop);
+                optionalLaptop = laptopRepository.findById(id);
+                if (optionalLaptop.isPresent()) {
+                    laptop = optionalLaptop.get();
+                    cartLaptop.remove(laptop);
                 }
             }
             accountRepository.save(account);
@@ -133,19 +113,22 @@ public class CartService implements ICartService {
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
             Cart cart = account.getCart();
-            List<CartLaptop> cartLaptops = cart.getCartLaptops();
-            Optional<CartLaptop> cartLaptopOptional;
+            Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
+
+            Optional<Laptop> optionalLaptop;
+            Laptop laptop;
+            int quantity;
             for (Long id : dto.getIds()) {
-                cartLaptopOptional = cartLaptops.stream().filter(cartLaptop ->
-                        cartLaptop.getLaptop().getId().equals(id)).findFirst();
-                if (cartLaptopOptional.isPresent()) {
-                    CartLaptop cartLaptop = cartLaptopOptional.get();
-                    if(cartLaptop.getQuantity() > 1) {
-                        cartLaptop.setQuantity(cartLaptop.getQuantity() -1);
-                        cartLaptopRepository.save(cartLaptop);
+                optionalLaptop = laptopRepository.findById(id);
+                if (optionalLaptop.isPresent()) {
+                    laptop = optionalLaptop.get();
+                    if (cartLaptop.containsKey(laptop)) {
+                        quantity = cartLaptop.get(laptop);
+                        cartLaptop.put(laptop, quantity > 1 ? quantity - 1 : 1);
                     }
                 }
             }
+            accountRepository.save(account);
         }
     }
 }
