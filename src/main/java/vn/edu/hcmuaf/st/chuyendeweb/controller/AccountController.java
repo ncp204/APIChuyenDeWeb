@@ -34,6 +34,12 @@ public class AccountController {
         return accountService.update(accountDTO, token);
     }
 
+    @PutMapping("/account/admin/update")
+    public ResponseEntity<?> updateAccountByAdmin(@RequestBody AccountDTO accountDTO, @RequestParam("token") String token) {
+        accountService.updateAccountByAdmin(accountDTO, token);
+        return new ResponseEntity<>(new ResponMessenger("Cập nhật tài khoản thành công"), HttpStatus.OK);
+    }
+
     @GetMapping("/account/list")
     public List<Account> getAccounts() {
         return accountService.findAllAccount();

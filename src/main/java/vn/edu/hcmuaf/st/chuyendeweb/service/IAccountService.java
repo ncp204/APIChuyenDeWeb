@@ -20,6 +20,8 @@ public interface IAccountService {
 
     AccountDTO update(AccountDTO dto, String token);
 
+    void updateAccountByAdmin(AccountDTO dto, String token);
+
     Boolean activeAccount(Long id, String activation_code);
 
     Boolean updatePassword(String id, String password);
