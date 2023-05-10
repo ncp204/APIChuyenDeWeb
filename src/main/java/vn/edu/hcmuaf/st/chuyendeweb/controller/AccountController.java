@@ -49,9 +49,10 @@ public class AccountController {
         return accountService.activeAccount(id, "") ? "Đã kích hoạt tài khoản, vui lòng đăng nhập" : "Đã xảy ra lỗi";
     }
 
-    @DeleteMapping("")
-    public void deleteAccount(@RequestBody Long... ids) {
-
+    @DeleteMapping("/account/delete/{id}")
+    public ResponseEntity<?> deleteAccount(@PathVariable("id") Long id) {
+        accountService.deleteAccountById(id);
+        return new ResponseEntity<>(new ResponMessenger("Đã xóa tài khoản thành công"), HttpStatus.OK);
     }
 
     @PostMapping("/account/changePassword")

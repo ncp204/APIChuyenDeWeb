@@ -16,6 +16,8 @@ public interface IAccountService {
 
     AccountDTO addAccount(AccountDTO dto);
 
+    void deleteAccountById(Long id);
+
     AccountDTO update(AccountDTO dto, String token);
 
     Boolean activeAccount(Long id, String activation_code);

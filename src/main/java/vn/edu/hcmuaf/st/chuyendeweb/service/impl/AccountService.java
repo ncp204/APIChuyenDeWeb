@@ -125,6 +125,16 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    public void deleteAccountById(Long id) {
+        Optional<Account> accountOptional = accountRepository.findById(id);
+        if(accountOptional.isPresent()) {
+            accountRepository.deleteById(id);
+        }else {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy tài khoản, vui lòng kiểm tra lại");
+        }
+    }
+
+    @Override
     public AccountDTO update(AccountDTO dto, String token) {
         Account account;
         String username = jwtTokenProvider.getUserNameFromToken(token.trim());
