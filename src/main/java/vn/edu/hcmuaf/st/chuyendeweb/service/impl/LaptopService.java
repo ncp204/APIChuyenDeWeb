@@ -203,9 +203,9 @@ public class LaptopService implements ILaptopService {
             ImageModel imageModel;
             for (ImageLaptop il : imageLaptops) {
                 imageModel = new ImageModel();
-                imageModel.setId(il.getId());
-                imageModel.setImageName(il.getImageName());
-                imageModel.setImageLink(il.getLinkImage());
+                imageModel.setUid(il.getId());
+                imageModel.setName(il.getImageName());
+                imageModel.setUrl(il.getLinkImage());
                 imageModels.add(imageModel);
             }
             return imageModels;
