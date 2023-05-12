@@ -41,8 +41,8 @@ public class CartService implements ICartService {
                 List<Laptop> laptopList = new ArrayList<>(cartLaptop.keySet());
                 for (Laptop laptop : laptopList) {
                     laptopDTO = laptopConverter.toLaptopDTO(laptop);
-                    laptopDTO.setTotalAmout(laptopDTO.getPrice() * laptopDTO.getQuantity());
                     laptopDTO.setQuantity(cartLaptop.get(laptop));
+                    laptopDTO.setTotalAmout(laptopDTO.getPrice() * laptopDTO.getQuantity());
                     dtoList.add(laptopDTO);
                     cartDTO.setTotalPayment(cartDTO.getTotalPayment() + laptopDTO.getTotalAmout());
                 }
