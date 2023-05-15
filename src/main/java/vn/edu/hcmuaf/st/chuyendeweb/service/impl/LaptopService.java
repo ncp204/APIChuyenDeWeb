@@ -153,6 +153,18 @@ public class LaptopService implements ILaptopService {
     }
 
     @Override
+    public List<LaptopDTO> getLaptopByProductName(String productName) {
+        List<LaptopDTO> result = new ArrayList<>();
+        List<Laptop> laptops = laptopRepository.findByProductNameContainingIgnoreCase(productName);
+        LaptopDTO laptopDTO;
+        for(Laptop laptop: laptops) {
+            laptopDTO = laptopConverter.toLaptopDTO(laptop);
+            result.add(laptopDTO);
+        }
+        return result;
+    }
+
+    @Override
     public List<String> getAllBrand() {
         List<String> brands = laptopRepository.findAllBrand();
         return brands;

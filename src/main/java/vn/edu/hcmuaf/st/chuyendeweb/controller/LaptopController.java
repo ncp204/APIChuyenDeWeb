@@ -83,6 +83,12 @@ public class LaptopController {
         return laptopService.findLaptopById(id);
     }
 
+    @GetMapping("/laptop/product_name")
+    public List<LaptopDTO> searchLaptopByProductName(@RequestParam("productName") String productName) {
+        return laptopService.getLaptopByProductName(productName);
+    }
+
+
     @GetMapping("/laptop/brand")
     public List<String> getAllBrand() {
         return laptopService.getAllBrand();

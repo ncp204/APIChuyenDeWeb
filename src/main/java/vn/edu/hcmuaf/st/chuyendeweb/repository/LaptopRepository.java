@@ -23,4 +23,6 @@ public interface LaptopRepository extends JpaRepository<Laptop, Long> {
     List<String> findAllChipCpu();
 
     Optional<Laptop> findLaptopsById(Long id);
+
+    List<Laptop> findByProductNameContainingIgnoreCase(String productName);
 }

@@ -22,6 +22,8 @@ public interface ILaptopService {
 
     Page<Laptop> getAllLaptop(LaptopFilter filter, int start, int limit);
 
+    List<LaptopDTO> getLaptopByProductName(String key);
+
     List<String> getAllBrand();
 
     List<String> getAllType();
