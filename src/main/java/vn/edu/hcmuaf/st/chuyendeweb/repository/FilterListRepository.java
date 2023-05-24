@@ -46,6 +46,16 @@ public class FilterListRepository {
         typedQuery.setMaxResults(limit);
         List<Laptop> laptops = typedQuery.getResultList();
 
+        while (start > 0) {
+            if(laptops.size() > 0) {
+                break;
+            }else {
+                start--;
+                typedQuery.setFirstResult(start * limit);
+                laptops = typedQuery.getResultList();
+            }
+        }
+
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
         countQuery.select(criteriaBuilder.count(countQuery.from(Laptop.class)));
         if (!predicates.isEmpty()) {
